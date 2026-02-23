@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversión Estacional | Material Design 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Seasonal Dynamic (Primavera, Verano, Otoño, Invierno) -->
+    <!-- Application Structure Plan: 
+         La aplicación se organiza en un panel lateral de configuración y un área central de visualización. 
+         Se ha elegido esta estructura de tablero (dashboard) para permitir al usuario ver el impacto 
+         inmediato de los cambios en los parámetros sin perder de vista los gráficos y tablas. 
+         El flujo es: Configurar -> Visualizar -> Analizar. -->
+    <!-- Visualization & Content Choices: 
+         1. Gráfico de Barras Apiladas (Chart.js): Para distinguir claramente entre capital, ahorro e interés. 
+         2. Cards de Resumen: Para métricas clave de alto nivel.
+         3. Tabla Detallada: Para análisis granular anual.
+         Confirmado: Uso de Canvas para gráficos y Unicode/CSS para iconografía para cumplir con la arquitectura limpia. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        :root {
+            --md-sys-color-primary: #2e7d32;
+            --md-sys-color-secondary: #1b5e20;
+            --md-sys-color-accent: #fbc02d;
+            --md-sys-color-surface: #f1f8e9;
+            --md-sys-color-surface-container: #ffffff;
+            --md-sys-color-outline: #747775;
+        }
+
+        body.season-spring {
+            --md-sys-color-primary: #2e7d32;
+            --md-sys-color-secondary: #81c784; 
+            --md-sys-color-accent: #f06292;
+            --md-sys-color-surface: #f1f8e9;
+        }
+        body.season-summer {
+            --md-sys-color-primary: #1976d2;
+            --md-sys-color-secondary: #64b5f6;
+            --md-sys-color-accent: #ffd54f;
+            --md-sys-color-surface: #e3f2fd;
+        }
+        body.season-autumn {
+            --md-sys-color-primary: #d84315;
+            --md-sys-color-secondary: #ff8a65;
+            --md-sys-color-accent: #795548;
+            --md-sys-color-surface: #fbe9e7;
+        }
+        body.season-winter {
+            --md-sys-color-primary: #455a64;
+            --md-sys-color-secondary: #90a4ae;
+            --md-sys-color-accent: #00bcd4;
+            --md-sys-color-surface: #eceff1;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: var(--md-sys-color-surface);
+            transition: all 0.5s ease;
+        }
+        .md-card { 
+            background: var(--md-sys-color-surface-container); 
+            border-radius: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .md-input-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .md-input {
+            width: 100%;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 8px;
+            padding: 12px;
+            background: transparent;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .md-input:focus {
+            outline: none;
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 11px;
+        }
+        .md-label {
+            position: absolute;
+            left: 12px;
+            top: -10px;
+            background: white;
+            padding: 0 4px;
+            font-size: 0.75rem;
+            color: var(--md-sys-color-primary);
+            font-weight: 500;
+        }
+        .btn-season {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 380px;
+        }
+    </style>
+</head>
+<body class="season-spring text-gray-800 antialiased">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div id="header-icon" class="flex items-center justify-center w-12 h-12 rounded-2xl text-white transition-all duration-500" style="background-color: var(--md-sys-color-primary)">
+                    <span id="season-emoji" class="text-2xl">🌱</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-gray-900">Inversión Inteligente</h1>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold" id="season-name">Ciclo de Primavera</p>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex bg-gray-100 p-1 rounded-full space-x-1">
+                <button onclick="changeSeason('spring')" class="btn-season bg-white shadow-sm">Primavera</button>
+                <button onclick="changeSeason('summer')" class="btn-season text-gray-600">Verano</button>
+                <button onclick="changeSeason('autumn')" class="btn-season text-gray-600">Otoño</button>
+                <button onclick="changeSeason('winter')" class="btn-season text-gray-600">Invierno</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <aside class="lg:col-span-4 space-y-6">
+                <div class="md-card p-8">
+                    <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Configuración</h2>
+
+                    <div class="md-input-container">
+                        <label class="md-label">Capital Inicial ($)</label>
+                        <input type="number" id="initialCapital" class="md-input" value="0">
+                    </div>
+
+                    <div class="md-input-container">
+                        <label class="md-label">Tasa Anual (%)</label>
+                        <input type="number" id="annualRate" class="md-input" value="9" step="0.1">
+                    </div>
+
+                    <div class="md-input-container">
+                        <label class="md-label">Plazo (Años)</label>
+                        <input type="number" id="years" class="md-input" value="2">
+                    </div>
+
+                    <div class="md-input-container">
+                        <label class="md-label">Pago de Intereses</label>
+                        <select id="compoundFrequency" class="md-input">
+                            <option value="365">Diario</option>
+                            <option value="52">Semanal</option>
+                            <option value="12" selected>Mensual</option>
+                            <option value="1">Anual</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100 mt-2">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase mb-6 mt-4 tracking-tighter">Aportaciones Recurrentes</h3>
+                        <div class="md-input-container">
+                            <label class="md-label">Monto de Depósito ($)</label>
+                            <input type="number" id="contributionAmount" class="md-input" value="10000">
+                        </div>
+                        <div class="md-input-container">
+                            <label class="md-label">Frecuencia</label>
+                            <select id="contributionFrequency" class="md-input">
+                                <option value="365">Diaria</option>
+                                <option value="52">Semanal</option>
+                                <option value="12" selected>Mensual</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md-card p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-100">
+                    <p class="text-sm italic text-gray-600 mb-4" id="motivation-quote">"La mejor época para plantar un árbol fue hace 20 años. La segunda mejor época es ahora."</p>
+                    <div class="flex items-center font-bold" style="color: var(--md-sys-color-primary)">
+                        <span class="mr-2">📈</span>
+                        <span class="text-xs uppercase">Meta: Libertad Financiera</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="lg:col-span-8 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md-card p-6 border-l-8" style="border-left-color: var(--md-sys-color-primary)">
+                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Saldo Final</p>
+                        <p id="resFinalBalance" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    </div>
+                    <div class="md-card p-6 border-l-8 border-gray-300">
+                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Total Aportado</p>
+                        <p id="resTotalDeposits" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    </div>
+                    <div class="md-card p-6 border-l-8" style="border-left-color: var(--md-sys-color-accent)">
+                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Cosecha (Interés)</p>
+                        <p id="resTotalInterest" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    </div>
+                </div>
+
+                <div class="md-card p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-8 flex items-center">
+                        <span class="mr-2">📊</span> Análisis de Crecimiento
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="md-card overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="font-bold text-gray-800 uppercase text-sm tracking-widest">Reporte de Resultados</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest">
+                                <tr>
+                                    <th class="px-8 py-4 font-bold">Año</th>
+                                    <th class="px-8 py-4 font-bold">Aportado</th>
+                                    <th class="px-8 py-4 font-bold">Interés Acum.</th>
+                                    <th class="px-8 py-4 font-bold text-right">Saldo Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summaryTableBody" class="text-sm divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let myChart = null;
+        let currentSeason = 'spring';
+
+        const seasonsConfig = {
+            spring: { name: "Ciclo de Primavera", emoji: "🌱", quote: "La constancia es la lluvia que hace crecer tu jardín financiero.", colors: { primary: '#2e7d32', secondary: '#a5d6a7', accent: '#f06292' } },
+            summer: { name: "Ciclo de Verano", emoji: "☀️", quote: "Tu capital está en pleno crecimiento. ¡Aprovecha la energía del interés!", colors: { primary: '#1976d2', secondary: '#90caf9', accent: '#ffd54f' } },
+            autumn: { name: "Ciclo de Otoño", emoji: "🍂", quote: "Es tiempo de observar cómo maduran tus decisiones del pasado.", colors: { primary: '#d84315', secondary: '#ffab91', accent: '#795548' } },
+            winter: { name: "Ciclo de Invierno", emoji: "❄️", quote: "La estabilidad es la base de un futuro tranquilo. Tu capital está protegido.", colors: { primary: '#455a64', secondary: '#b0bec5', accent: '#00bcd4' } }
+        };
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+
+        function changeSeason(season) {
+            currentSeason = season;
+            document.body.className = `season-${season} text-gray-800 antialiased`;
+            
+            const config = seasonsConfig[season];
+            document.getElementById('season-name').innerText = config.name;
+            document.getElementById('motivation-quote').innerText = config.quote;
+            document.getElementById('season-emoji').innerText = config.emoji;
+
+            const buttons = document.querySelectorAll('.btn-season');
+            buttons.forEach(btn => {
+                const btnText = btn.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (btnText === season) {
+                    btn.classList.add('bg-white', 'shadow-sm');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            calculate();
+        }
+
+        function calculate() {
+            const initialCapital = parseFloat(document.getElementById('initialCapital').value) || 0;
+            const annualRate = (parseFloat(document.getElementById('annualRate').value) || 0) / 100;
+            const years = parseInt(document.getElementById('years').value) || 1;
+            const compoundFreq = parseInt(document.getElementById('compoundFrequency').value);
+            const contributionAmount = parseFloat(document.getElementById('contributionAmount').value) || 0;
+            const contributionFreq = parseInt(document.getElementById('contributionFrequency').value);
+
+            let currentBalance = initialCapital;
+            let totalDeposited = initialCapital;
+            let totalInterest = 0;
+            let accruedInterest = 0;
+
+            const daysInYear = 365;
+            const totalDays = years * daysInYear;
+            const dailyRate = annualRate / daysInYear;
+            
+            const depositInterval = daysInYear / contributionFreq;
+            const capitalizationInterval = daysInYear / compoundFreq;
+
+            const chartLabels = ['Inicio'];
+            const dataInitial = [initialCapital];
+            const dataDeposits = [0];
+            const dataInterests = [0];
+            const tableData = [];
+
+            let nextDepositDay = 1;
+            let nextCapDay = capitalizationInterval;
+            const maxTotalDeposits = initialCapital + (contributionAmount * contributionFreq * years);
+
+            for (let day = 1; day <= totalDays; day++) {
+                // Aportación
+                if (day >= Math.floor(nextDepositDay) && totalDeposited < maxTotalDeposits) {
+                    currentBalance += contributionAmount;
+                    totalDeposited += contributionAmount;
+                    nextDepositDay += depositInterval;
+                }
+
+                // Devengo
+                let interestToday = currentBalance * dailyRate;
+                accruedInterest += interestToday;
+
+                // Capitalización
+                if (day >= Math.floor(nextCapDay)) {
+                    currentBalance += accruedInterest;
+                    totalInterest += accruedInterest;
+                    accruedInterest = 0;
+                    nextCapDay += capitalizationInterval;
+                }
+
+                // Snapshot Anual
+                if (day % daysInYear === 0) {
+                    const year = day / daysInYear;
+                    chartLabels.push(`Año ${year}`);
+                    dataInitial.push(initialCapital);
+                    dataDeposits.push(totalDeposited - initialCapital);
+                    dataInterests.push(totalInterest);
+                    tableData.push({ year, deposits: totalDeposited, interest: totalInterest, total: currentBalance });
+                }
+            }
+
+            // UI
+            document.getElementById('resFinalBalance').innerText = formatCurrency(currentBalance);
+            document.getElementById('resTotalDeposits').innerText = formatCurrency(totalDeposited);
+            document.getElementById('resTotalInterest').innerText = formatCurrency(totalInterest);
+
+            const tableBody = document.getElementById('summaryTableBody');
+            tableBody.innerHTML = '';
+            tableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-8 py-4 font-semibold text-gray-900">Año ${row.year}</td>
+                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.deposits)}</td>
+                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.interest)}</td>
+                    <td class="px-8 py-4 text-right font-bold" style="color: var(--md-sys-color-primary)">${formatCurrency(row.total)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            updateChart(chartLabels, dataInitial, dataDeposits, dataInterests);
+        }
+
+        function updateChart(labels, initial, deposits, interests) {
+            const ctx = document.getElementById('investmentChart').getContext('2d');
+            const config = seasonsConfig[currentSeason];
+
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Capital', data: initial, backgroundColor: config.colors.primary, borderRadius: 5 },
+                        { label: 'Ahorro', data: deposits, backgroundColor: config.colors.secondary, borderRadius: 5 },
+                        { label: 'Interés', data: interests, backgroundColor: config.colors.accent, borderRadius: 5 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12 }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, ticks: { callback: v => '$' + v.toLocaleString() } }
+                    }
+                }
+            });
+        }
+
+        const inputs = ['initialCapital', 'annualRate', 'years', 'compoundFrequency', 'contributionAmount', 'contributionFrequency'];
+        inputs.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+        
+        window.onload = () => changeSeason('spring');
+    </script>
+</body>
+</html>
