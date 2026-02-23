@@ -233,6 +233,26 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Desglose Mensual -->
+                <div class="md-card overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="font-bold text-gray-800 uppercase text-sm tracking-widest">Desglose Mensual</h3>
+                    </div>
+                    <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
+                        <table class="w-full text-left relative">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest sticky top-0 shadow-sm z-10">
+                                <tr>
+                                    <th class="px-8 py-4 font-bold bg-gray-50">Mes</th>
+                                    <th class="px-8 py-4 font-bold bg-gray-50">Aportado</th>
+                                    <th class="px-8 py-4 font-bold bg-gray-50">Interés Acum.</th>
+                                    <th class="px-8 py-4 font-bold text-right bg-gray-50">Saldo Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthlyTableBody" class="text-sm divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -301,10 +321,16 @@
             const dataDeposits = [0];
             const dataInterests = [0];
             const tableData = [];
+            const monthlyTableData = []; // Datos para la tabla mensual
 
             let nextDepositDay = 1;
             let nextCapDay = capitalizationInterval;
             const maxTotalDeposits = initialCapital + (contributionAmount * contributionFreq * years);
+            
+            // Variables para instantáneas mensuales
+            const daysInMonth = daysInYear / 12;
+            let nextMonthSnapshot = daysInMonth;
+            let monthCounter = 1;
 
             for (let day = 1; day <= totalDays; day++) {
                 // Aportación
@@ -335,6 +361,13 @@
                     dataInterests.push(totalInterest);
                     tableData.push({ year, deposits: totalDeposited, interest: totalInterest, total: currentBalance });
                 }
+
+                // Snapshot Mensual
+                if (day >= Math.floor(nextMonthSnapshot) && monthCounter <= years * 12) {
+                    monthlyTableData.push({ month: monthCounter, deposits: totalDeposited, interest: totalInterest, total: currentBalance });
+                    monthCounter++;
+                    nextMonthSnapshot += daysInMonth;
+                }
             }
 
             // UI
@@ -346,6 +379,7 @@
             tableBody.innerHTML = '';
             tableData.forEach(row => {
                 const tr = document.createElement('tr');
+                tr.className = 'hover:bg-black/5 transition-colors duration-200';
                 tr.innerHTML = `
                     <td class="px-8 py-4 font-semibold text-gray-900">Año ${row.year}</td>
                     <td class="px-8 py-4 text-gray-600">${formatCurrency(row.deposits)}</td>
@@ -353,6 +387,21 @@
                     <td class="px-8 py-4 text-right font-bold" style="color: var(--md-sys-color-primary)">${formatCurrency(row.total)}</td>
                 `;
                 tableBody.appendChild(tr);
+            });
+
+            // Llenar la Tabla Mensual
+            const monthlyTableBody = document.getElementById('monthlyTableBody');
+            monthlyTableBody.innerHTML = '';
+            monthlyTableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-black/5 transition-colors duration-200';
+                tr.innerHTML = `
+                    <td class="px-8 py-4 font-semibold text-gray-900">Mes ${row.month}</td>
+                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.deposits)}</td>
+                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.interest)}</td>
+                    <td class="px-8 py-4 text-right font-bold" style="color: var(--md-sys-color-primary)">${formatCurrency(row.total)}</td>
+                `;
+                monthlyTableBody.appendChild(tr);
             });
 
             updateChart(chartLabels, dataInitial, dataDeposits, dataInterests);
