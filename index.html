@@ -3,67 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inversión Estacional | Material Design 3</title>
+    <title>Inversión Inteligente | Finanzas 101</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Seasonal Dynamic (Primavera, Verano, Otoño, Invierno) -->
-    <!-- Application Structure Plan: 
-         La aplicación se organiza en un panel lateral de configuración y un área central de visualización. 
-         Se ha elegido esta estructura de tablero (dashboard) para permitir al usuario ver el impacto 
-         inmediato de los cambios en los parámetros sin perder de vista los gráficos y tablas. 
-         El flujo es: Configurar -> Visualizar -> Analizar. -->
-    <!-- Visualization & Content Choices: 
-         1. Gráfico de Barras Apiladas (Chart.js): Para distinguir claramente entre capital, ahorro e interés. 
-         2. Cards de Resumen: Para métricas clave de alto nivel.
-         3. Tabla Detallada: Para análisis granular anual.
-         Confirmado: Uso de Canvas para gráficos y Unicode/CSS para iconografía para cumplir con la arquitectura limpia. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --md-sys-color-primary: #2e7d32;
-            --md-sys-color-secondary: #1b5e20;
-            --md-sys-color-accent: #fbc02d;
-            --md-sys-color-surface: #f1f8e9;
-            --md-sys-color-surface-container: #ffffff;
-            --md-sys-color-outline: #747775;
-        }
-
-        body.season-spring {
-            --md-sys-color-primary: #2e7d32;
-            --md-sys-color-secondary: #81c784; 
-            --md-sys-color-accent: #f06292;
-            --md-sys-color-surface: #f1f8e9;
-        }
-        body.season-summer {
-            --md-sys-color-primary: #1976d2;
-            --md-sys-color-secondary: #64b5f6;
-            --md-sys-color-accent: #ffd54f;
-            --md-sys-color-surface: #e3f2fd;
-        }
-        body.season-autumn {
-            --md-sys-color-primary: #d84315;
-            --md-sys-color-secondary: #ff8a65;
-            --md-sys-color-accent: #795548;
-            --md-sys-color-surface: #fbe9e7;
-        }
-        body.season-winter {
-            --md-sys-color-primary: #455a64;
-            --md-sys-color-secondary: #90a4ae;
-            --md-sys-color-accent: #00bcd4;
-            --md-sys-color-surface: #eceff1;
-        }
-
         body { 
-            font-family: 'Roboto', sans-serif; 
-            background-color: var(--md-sys-color-surface);
-            transition: all 0.5s ease;
+            font-family: 'Inter', sans-serif; 
         }
         .md-card { 
-            background: var(--md-sys-color-surface-container); 
+            background-color: #0f172a; /* bg-slate-900 */
             border-radius: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            border: 1px solid #1e293b; /* border-slate-800 */
             transition: all 0.3s ease;
+        }
+        .md-card:hover {
+            border-color: #334155; /* border-slate-700 */
         }
         .md-input-container {
             position: relative;
@@ -71,16 +26,17 @@
         }
         .md-input {
             width: 100%;
-            border: 1px solid var(--md-sys-color-outline);
+            border: 1px solid #334155; /* border-slate-700 */
             border-radius: 8px;
             padding: 12px;
-            background: transparent;
+            background: #020617; /* bg-slate-950 */
+            color: #f8fafc; /* text-slate-50 */
             font-size: 1rem;
             transition: all 0.2s;
         }
         .md-input:focus {
             outline: none;
-            border-color: var(--md-sys-color-primary);
+            border-color: #10b981; /* border-emerald-500 */
             border-width: 2px;
             padding: 11px;
         }
@@ -88,18 +44,11 @@
             position: absolute;
             left: 12px;
             top: -10px;
-            background: white;
+            background: #0f172a; /* bg-slate-900 */
             padding: 0 4px;
             font-size: 0.75rem;
-            color: var(--md-sys-color-primary);
+            color: #10b981; /* text-emerald-500 */
             font-weight: 500;
-        }
-        .btn-season {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s;
         }
         .chart-container {
             position: relative;
@@ -109,26 +58,22 @@
         }
     </style>
 </head>
-<body class="season-spring text-gray-800 antialiased">
+<body class="bg-slate-950 text-slate-200 antialiased">
 
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <div id="header-icon" class="flex items-center justify-center w-12 h-12 rounded-2xl text-white transition-all duration-500" style="background-color: var(--md-sys-color-primary)">
-                    <span id="season-emoji" class="text-2xl">🌱</span>
+                <div id="header-icon" class="flex items-center justify-center w-12 h-12 rounded-2xl text-emerald-400 bg-emerald-500/10">
+                    <span id="season-emoji" class="text-2xl">📊</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-gray-900">Inversión Inteligente</h1>
-                    <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold" id="season-name">Ciclo de Primavera</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-50">Calculadora Financiera</h1>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold" id="season-name">Interés Compuesto</p>
                 </div>
             </div>
-            
-            <div class="hidden md:flex bg-gray-100 p-1 rounded-full space-x-1">
-                <button onclick="changeSeason('spring')" class="btn-season bg-white shadow-sm">Primavera</button>
-                <button onclick="changeSeason('summer')" class="btn-season text-gray-600">Verano</button>
-                <button onclick="changeSeason('autumn')" class="btn-season text-gray-600">Otoño</button>
-                <button onclick="changeSeason('winter')" class="btn-season text-gray-600">Invierno</button>
-            </div>
+            <a href="finanzas101.html" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-5 rounded-full transition-all hover:scale-105 active:scale-95 text-sm">
+                Saber más de finanzas
+            </a>
         </div>
     </header>
 
@@ -137,7 +82,7 @@
             
             <aside class="lg:col-span-4 space-y-6">
                 <div class="md-card p-8">
-                    <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Configuración</h2>
+                    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Configuración</h2>
 
                     <div class="md-input-container">
                         <label class="md-label">Capital Inicial ($)</label>
@@ -164,8 +109,8 @@
                         </select>
                     </div>
 
-                    <div class="pt-4 border-t border-gray-100 mt-2">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase mb-6 mt-4 tracking-tighter">Aportaciones Recurrentes</h3>
+                    <div class="pt-4 border-t border-slate-800 mt-2">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-6 mt-4 tracking-tighter">Aportaciones Recurrentes</h3>
                         <div class="md-input-container">
                             <label class="md-label">Monto de Depósito ($)</label>
                             <input type="number" id="contributionAmount" class="md-input" value="10000">
@@ -181,9 +126,9 @@
                     </div>
                 </div>
 
-                <div class="md-card p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-100">
-                    <p class="text-sm italic text-gray-600 mb-4" id="motivation-quote">"La mejor época para plantar un árbol fue hace 20 años. La segunda mejor época es ahora."</p>
-                    <div class="flex items-center font-bold" style="color: var(--md-sys-color-primary)">
+                <div class="md-card p-6 bg-slate-900/50 border border-slate-800">
+                    <p class="text-sm italic text-slate-400 mb-4" id="motivation-quote">"La mejor época para plantar un árbol fue hace 20 años. La segunda mejor época es ahora."</p>
+                    <div class="flex items-center font-bold text-emerald-400">
                         <span class="mr-2">📈</span>
                         <span class="text-xs uppercase">Meta: Libertad Financiera</span>
                     </div>
@@ -192,23 +137,23 @@
 
             <div class="lg:col-span-8 space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md-card p-6 border-l-8" style="border-left-color: var(--md-sys-color-primary)">
-                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Saldo Final</p>
-                        <p id="resFinalBalance" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    <div class="md-card p-6 border-l-8 border-emerald-500">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Saldo Final</p>
+                        <p id="resFinalBalance" class="text-3xl font-bold text-slate-50">$0.00</p>
                     </div>
-                    <div class="md-card p-6 border-l-8 border-gray-300">
-                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Total Aportado</p>
-                        <p id="resTotalDeposits" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    <div class="md-card p-6 border-l-8 border-blue-500">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Total Aportado</p>
+                        <p id="resTotalDeposits" class="text-3xl font-bold text-slate-50">$0.00</p>
                     </div>
-                    <div class="md-card p-6 border-l-8" style="border-left-color: var(--md-sys-color-accent)">
-                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Cosecha (Interés)</p>
-                        <p id="resTotalInterest" class="text-3xl font-bold text-gray-900">$0.00</p>
+                    <div class="md-card p-6 border-l-8 border-amber-500">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Cosecha (Interés)</p>
+                        <p id="resTotalInterest" class="text-3xl font-bold text-slate-50">$0.00</p>
                     </div>
                 </div>
 
                 <div class="md-card p-8">
-                    <h3 class="text-xl font-bold text-gray-800 mb-8 flex items-center">
-                        <span class="mr-2">📊</span> Análisis de Crecimiento
+                    <h3 class="text-xl font-bold text-slate-100 mb-8 flex items-center">
+                        <span class="mr-2">📈</span> Análisis de Crecimiento
                     </h3>
                     <div class="chart-container">
                         <canvas id="investmentChart"></canvas>
@@ -216,12 +161,12 @@
                 </div>
 
                 <div class="md-card overflow-hidden">
-                    <div class="p-6 border-b border-gray-100">
-                        <h3 class="font-bold text-gray-800 uppercase text-sm tracking-widest">Reporte de Resultados</h3>
+                    <div class="p-6 border-b border-slate-800">
+                        <h3 class="font-bold text-slate-300 uppercase text-sm tracking-widest">Reporte de Resultados</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest">
+                            <thead class="bg-slate-950 text-slate-400 text-xs uppercase tracking-widest">
                                 <tr>
                                     <th class="px-8 py-4 font-bold">Año</th>
                                     <th class="px-8 py-4 font-bold">Aportado</th>
@@ -229,27 +174,27 @@
                                     <th class="px-8 py-4 font-bold text-right">Saldo Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="summaryTableBody" class="text-sm divide-y divide-gray-100"></tbody>
+                            <tbody id="summaryTableBody" class="text-sm divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Desglose Mensual -->
                 <div class="md-card overflow-hidden">
-                    <div class="p-6 border-b border-gray-100">
-                        <h3 class="font-bold text-gray-800 uppercase text-sm tracking-widest">Desglose Mensual</h3>
+                    <div class="p-6 border-b border-slate-800">
+                        <h3 class="font-bold text-slate-300 uppercase text-sm tracking-widest">Desglose Mensual</h3>
                     </div>
                     <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
                         <table class="w-full text-left relative">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest sticky top-0 shadow-sm z-10">
+                            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-widest sticky top-0 shadow-sm z-10">
                                 <tr>
-                                    <th class="px-8 py-4 font-bold bg-gray-50">Mes</th>
-                                    <th class="px-8 py-4 font-bold bg-gray-50">Aportado</th>
-                                    <th class="px-8 py-4 font-bold bg-gray-50">Interés Acum.</th>
-                                    <th class="px-8 py-4 font-bold text-right bg-gray-50">Saldo Total</th>
+                                    <th class="px-8 py-4 font-bold">Mes</th>
+                                    <th class="px-8 py-4 font-bold">Aportado</th>
+                                    <th class="px-8 py-4 font-bold">Interés Acum.</th>
+                                    <th class="px-8 py-4 font-bold text-right">Saldo Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="monthlyTableBody" class="text-sm divide-y divide-gray-100"></tbody>
+                            <tbody id="monthlyTableBody" class="text-sm divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
@@ -259,41 +204,15 @@
 
     <script>
         let myChart = null;
-        let currentSeason = 'spring';
 
-        const seasonsConfig = {
-            spring: { name: "Ciclo de Primavera", emoji: "🌱", quote: "La constancia es la lluvia que hace crecer tu jardín financiero.", colors: { primary: '#2e7d32', secondary: '#a5d6a7', accent: '#f06292' } },
-            summer: { name: "Ciclo de Verano", emoji: "☀️", quote: "Tu capital está en pleno crecimiento. ¡Aprovecha la energía del interés!", colors: { primary: '#1976d2', secondary: '#90caf9', accent: '#ffd54f' } },
-            autumn: { name: "Ciclo de Otoño", emoji: "🍂", quote: "Es tiempo de observar cómo maduran tus decisiones del pasado.", colors: { primary: '#d84315', secondary: '#ffab91', accent: '#795548' } },
-            winter: { name: "Ciclo de Invierno", emoji: "❄️", quote: "La estabilidad es la base de un futuro tranquilo. Tu capital está protegido.", colors: { primary: '#455a64', secondary: '#b0bec5', accent: '#00bcd4' } }
+        const chartColors = {
+            primary: '#10b981',   // emerald-500
+            secondary: '#3b82f6', // blue-500
+            accent: '#f59e0b'     // amber-500
         };
 
         function formatCurrency(v) {
             return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
-        }
-
-        function changeSeason(season) {
-            currentSeason = season;
-            document.body.className = `season-${season} text-gray-800 antialiased`;
-            
-            const config = seasonsConfig[season];
-            document.getElementById('season-name').innerText = config.name;
-            document.getElementById('motivation-quote').innerText = config.quote;
-            document.getElementById('season-emoji').innerText = config.emoji;
-
-            const buttons = document.querySelectorAll('.btn-season');
-            buttons.forEach(btn => {
-                const btnText = btn.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (btnText === season) {
-                    btn.classList.add('bg-white', 'shadow-sm');
-                    btn.classList.remove('text-gray-600');
-                } else {
-                    btn.classList.remove('bg-white', 'shadow-sm');
-                    btn.classList.add('text-gray-600');
-                }
-            });
-
-            calculate();
         }
 
         function calculate() {
@@ -321,30 +240,26 @@
             const dataDeposits = [0];
             const dataInterests = [0];
             const tableData = [];
-            const monthlyTableData = []; // Datos para la tabla mensual
+            const monthlyTableData = [];
 
             let nextDepositDay = 1;
             let nextCapDay = capitalizationInterval;
             const maxTotalDeposits = initialCapital + (contributionAmount * contributionFreq * years);
             
-            // Variables para instantáneas mensuales
             const daysInMonth = daysInYear / 12;
             let nextMonthSnapshot = daysInMonth;
             let monthCounter = 1;
 
             for (let day = 1; day <= totalDays; day++) {
-                // Aportación
                 if (day >= Math.floor(nextDepositDay) && totalDeposited < maxTotalDeposits) {
                     currentBalance += contributionAmount;
                     totalDeposited += contributionAmount;
                     nextDepositDay += depositInterval;
                 }
 
-                // Devengo
                 let interestToday = currentBalance * dailyRate;
                 accruedInterest += interestToday;
 
-                // Capitalización
                 if (day >= Math.floor(nextCapDay)) {
                     currentBalance += accruedInterest;
                     totalInterest += accruedInterest;
@@ -352,7 +267,6 @@
                     nextCapDay += capitalizationInterval;
                 }
 
-                // Snapshot Anual
                 if (day % daysInYear === 0) {
                     const year = day / daysInYear;
                     chartLabels.push(`Año ${year}`);
@@ -362,7 +276,6 @@
                     tableData.push({ year, deposits: totalDeposited, interest: totalInterest, total: currentBalance });
                 }
 
-                // Snapshot Mensual
                 if (day >= Math.floor(nextMonthSnapshot) && monthCounter <= years * 12) {
                     monthlyTableData.push({ month: monthCounter, deposits: totalDeposited, interest: totalInterest, total: currentBalance });
                     monthCounter++;
@@ -370,7 +283,6 @@
                 }
             }
 
-            // UI
             document.getElementById('resFinalBalance').innerText = formatCurrency(currentBalance);
             document.getElementById('resTotalDeposits').innerText = formatCurrency(totalDeposited);
             document.getElementById('resTotalInterest').innerText = formatCurrency(totalInterest);
@@ -379,27 +291,26 @@
             tableBody.innerHTML = '';
             tableData.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-black/5 transition-colors duration-200';
+                tr.className = 'hover:bg-slate-800/50 transition-colors duration-200';
                 tr.innerHTML = `
-                    <td class="px-8 py-4 font-semibold text-gray-900">Año ${row.year}</td>
-                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.deposits)}</td>
-                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.interest)}</td>
-                    <td class="px-8 py-4 text-right font-bold" style="color: var(--md-sys-color-primary)">${formatCurrency(row.total)}</td>
+                    <td class="px-8 py-4 font-semibold text-slate-100">Año ${row.year}</td>
+                    <td class="px-8 py-4 text-slate-400">${formatCurrency(row.deposits)}</td>
+                    <td class="px-8 py-4 text-slate-400">${formatCurrency(row.interest)}</td>
+                    <td class="px-8 py-4 text-right font-bold text-emerald-400">${formatCurrency(row.total)}</td>
                 `;
                 tableBody.appendChild(tr);
             });
 
-            // Llenar la Tabla Mensual
             const monthlyTableBody = document.getElementById('monthlyTableBody');
             monthlyTableBody.innerHTML = '';
             monthlyTableData.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-black/5 transition-colors duration-200';
+                tr.className = 'hover:bg-slate-800/50 transition-colors duration-200';
                 tr.innerHTML = `
-                    <td class="px-8 py-4 font-semibold text-gray-900">Mes ${row.month}</td>
-                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.deposits)}</td>
-                    <td class="px-8 py-4 text-gray-600">${formatCurrency(row.interest)}</td>
-                    <td class="px-8 py-4 text-right font-bold" style="color: var(--md-sys-color-primary)">${formatCurrency(row.total)}</td>
+                    <td class="px-8 py-4 font-semibold text-slate-100">Mes ${row.month}</td>
+                    <td class="px-8 py-4 text-slate-400">${formatCurrency(row.deposits)}</td>
+                    <td class="px-8 py-4 text-slate-400">${formatCurrency(row.interest)}</td>
+                    <td class="px-8 py-4 text-right font-bold text-emerald-400">${formatCurrency(row.total)}</td>
                 `;
                 monthlyTableBody.appendChild(tr);
             });
@@ -409,29 +320,36 @@
 
         function updateChart(labels, initial, deposits, interests) {
             const ctx = document.getElementById('investmentChart').getContext('2d');
-            const config = seasonsConfig[currentSeason];
-
+            
             if (myChart) myChart.destroy();
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Capital', data: initial, backgroundColor: config.colors.primary, borderRadius: 5 },
-                        { label: 'Ahorro', data: deposits, backgroundColor: config.colors.secondary, borderRadius: 5 },
-                        { label: 'Interés', data: interests, backgroundColor: config.colors.accent, borderRadius: 5 }
+                        { label: 'Capital', data: initial, backgroundColor: chartColors.primary, borderRadius: 5 },
+                        { label: 'Ahorro', data: deposits, backgroundColor: chartColors.secondary, borderRadius: 5 },
+                        { label: 'Interés', data: interests, backgroundColor: chartColors.accent, borderRadius: 5 }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { 
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
-                        tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12 }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, color: '#94a3b8' } },
+                        tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12, titleColor: '#fff', bodyColor: '#fff' }
                     },
                     scales: {
-                        x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, ticks: { callback: v => '$' + v.toLocaleString() } }
+                        x: { 
+                            stacked: true, 
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: { 
+                            stacked: true, 
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#94a3b8', callback: v => '$' + v.toLocaleString() } 
+                        }
                     }
                 }
             });
@@ -440,7 +358,7 @@
         const inputs = ['initialCapital', 'annualRate', 'years', 'compoundFrequency', 'contributionAmount', 'contributionFrequency'];
         inputs.forEach(id => document.getElementById(id).addEventListener('input', calculate));
         
-        window.onload = () => changeSeason('spring');
+        window.onload = calculate;
     </script>
 </body>
 </html>
