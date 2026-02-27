@@ -837,7 +837,7 @@
     </section>
 
     <!-- Las Reglas del Oro -->
-    <section class="py-24 px-6 md:px-12 bg-slate-950 relative overflow-hidden">
+    <section class="py-24 px-6 md:px-12 bg-slate-950 relative overflow-hidden border-t border-slate-800">
         <!-- Fondo resplandeciente -->
         <div class="absolute left-1/4 top-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none"></div>
         <div class="absolute right-0 bottom-0 w-64 h-64 bg-amber-700/10 blur-[100px] rounded-full pointer-events-none"></div>
@@ -913,6 +913,116 @@
                         </p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lecturas Recomendadas -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900 border-t border-slate-800 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="fade-in-section text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Siguientes Pasos: <span class="text-emerald-500">Lecturas Recomendadas</span></h2>
+                <p class="text-xl text-slate-400 max-w-2xl mx-auto">El conocimiento es el activo que paga los mejores dividendos.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Libro 1 -->
+                <div class="fade-in-section delay-100 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden hover:border-amber-500/50 transition-colors flex flex-col h-full group">
+                    <div class="h-64 bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <!-- Portada CSS Libro 1 -->
+                        <div class="w-32 h-44 bg-gradient-to-br from-amber-600 to-amber-900 rounded-r-md rounded-l-sm shadow-[10px_10px_20px_rgba(0,0,0,0.6)] flex flex-col justify-between p-4 border-l-4 border-amber-950 relative group-hover:scale-110 transition-transform duration-500 z-10">
+                            <div class="absolute inset-y-0 left-1 w-1 bg-white/10"></div>
+                            <div class="text-[9px] text-amber-200 font-semibold uppercase tracking-widest text-center mt-1">G.S. Clason</div>
+                            <div class="text-white font-bold text-[15px] leading-tight text-center drop-shadow-md">El Hombre Más Rico de Babilonia</div>
+                            <div class="w-8 h-8 mx-auto opacity-70"><i data-lucide="coins" class="w-full h-full text-amber-200"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 mb-2 leading-tight">El hombre más rico de Babilonia</h3>
+                        <p class="text-sm text-amber-500 mb-4 font-medium">George S. Clason</p>
+                        <p class="text-slate-400 text-sm flex-grow mb-6">
+                            Aprenderás las reglas fundamentales y atemporales para generar riqueza, ahorrar sistemáticamente y hacer que tu dinero trabaje para ti a través de fascinantes historias antiguas.
+                        </p>
+                        <a href="https://www.amazon.com.mx/s?k=el+hombre+mas+rico+de+babilonia" target="_blank" rel="noopener noreferrer" class="w-full block text-center py-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-500/50 text-slate-300 hover:text-amber-400 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Ver en Amazon
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Libro 2 -->
+                <div class="fade-in-section delay-200 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-colors flex flex-col h-full group">
+                    <div class="h-64 bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <!-- Portada CSS Libro 2 -->
+                        <div class="w-32 h-44 bg-gradient-to-br from-slate-200 to-slate-400 rounded-r-md rounded-l-sm shadow-[10px_10px_20px_rgba(0,0,0,0.6)] flex flex-col justify-between p-4 border-l-4 border-slate-500 relative group-hover:scale-110 transition-transform duration-500 z-10">
+                            <div class="absolute inset-y-0 left-1 w-1 bg-black/5"></div>
+                            <div class="text-[9px] text-slate-600 font-bold uppercase tracking-widest text-center mt-1">Morgan Housel</div>
+                            <div class="text-slate-900 font-black text-[15px] leading-tight text-center drop-shadow-sm">La Psicología del Dinero</div>
+                            <div class="w-8 h-8 mx-auto opacity-70"><i data-lucide="brain" class="w-full h-full text-slate-700"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 mb-2 leading-tight">La psicología del dinero</h3>
+                        <p class="text-sm text-blue-400 mb-4 font-medium">Morgan Housel</p>
+                        <p class="text-slate-400 text-sm flex-grow mb-6">
+                            Entenderás que el éxito financiero no depende tanto de lo que sabes (matemáticas o economía), sino de cómo te comportas (hábitos, ego y control de emociones).
+                        </p>
+                        <a href="https://www.amazon.com.mx/s?k=la+psicologia+del+dinero" target="_blank" rel="noopener noreferrer" class="w-full block text-center py-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Ver en Amazon
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Libro 3 -->
+                <div class="fade-in-section delay-300 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden hover:border-emerald-500/50 transition-colors flex flex-col h-full group">
+                    <div class="h-64 bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <!-- Portada CSS Libro 3 -->
+                        <div class="w-32 h-44 bg-gradient-to-br from-emerald-500 to-emerald-800 rounded-r-md rounded-l-sm shadow-[10px_10px_20px_rgba(0,0,0,0.6)] flex flex-col justify-between p-4 border-l-4 border-emerald-950 relative group-hover:scale-110 transition-transform duration-500 z-10">
+                            <div class="absolute inset-y-0 left-1 w-1 bg-white/10"></div>
+                            <div class="text-[9px] text-emerald-100 font-semibold uppercase tracking-widest text-center mt-1">Sofía Macías</div>
+                            <div class="text-white font-bold text-[14px] leading-tight text-center drop-shadow-md">Pequeño Cerdo Capitalista</div>
+                            <div class="w-8 h-8 mx-auto opacity-80"><i data-lucide="piggy-bank" class="w-full h-full text-emerald-100"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 mb-2 leading-tight">Pequeño Cerdo Capitalista</h3>
+                        <p class="text-sm text-emerald-400 mb-4 font-medium">Sofía Macías</p>
+                        <p class="text-slate-400 text-sm flex-grow mb-6">
+                            Una guía práctica, divertida y cien por ciento adaptada a México para entender todos los instrumentos formales, desde CETES hasta la Bolsa de Valores, sin tecnicismos.
+                        </p>
+                        <a href="https://www.amazon.com.mx/s?k=peque%C3%B1o+cerdo+capitalista+inversiones" target="_blank" rel="noopener noreferrer" class="w-full block text-center py-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Ver en Amazon
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Libro 4 -->
+                <div class="fade-in-section delay-400 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden hover:border-purple-500/50 transition-colors flex flex-col h-full group">
+                    <div class="h-64 bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <!-- Portada CSS Libro 4 -->
+                        <div class="w-32 h-44 bg-gradient-to-br from-indigo-800 to-purple-900 rounded-r-md rounded-l-sm shadow-[10px_10px_20px_rgba(0,0,0,0.6)] flex flex-col justify-between p-4 border-l-4 border-indigo-950 relative group-hover:scale-110 transition-transform duration-500 z-10">
+                            <div class="absolute inset-y-0 left-1 w-1 bg-white/10"></div>
+                            <div class="text-[9px] text-purple-200 font-semibold uppercase tracking-widest text-center mt-1">Luis Osvaldo</div>
+                            <div class="text-white font-bold text-[16px] leading-tight text-center drop-shadow-md">Vivir de las FIBRAs</div>
+                            <div class="w-8 h-8 mx-auto opacity-70"><i data-lucide="building-2" class="w-full h-full text-purple-200"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 mb-2 leading-tight">Vivir de las FIBRAs</h3>
+                        <p class="text-sm text-purple-400 mb-4 font-medium">Luis Osvaldo</p>
+                        <p class="text-slate-400 text-sm flex-grow mb-6">
+                            El manual paso a paso para comprender a fondo los fideicomisos inmobiliarios en México. Aprenderás a analizarlos y a construir un portafolio para generar rentas pasivas.
+                        </p>
+                        <a href="https://www.amazon.com.mx/s?k=vivir+de+las+fibras" target="_blank" rel="noopener noreferrer" class="w-full block text-center py-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-purple-500/50 text-slate-300 hover:text-purple-400 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Ver en Amazon
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
