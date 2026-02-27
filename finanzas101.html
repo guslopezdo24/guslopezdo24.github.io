@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas Personales 101</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Configuración de Tailwind para custom colors/fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos personalizados para animaciones -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Clases para el efecto de Fade In al hacer scroll */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1000ms ease-out, transform 1000ms ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+        
+        /* Utilidades para los delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+        .delay-600 { transition-delay: 600ms; }
+        .delay-700 { transition-delay: 700ms; }
+        .delay-800 { transition-delay: 800ms; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-50 min-h-screen font-sans selection:bg-emerald-500/30">
+
+    <!-- Progress Bar -->
+    <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-emerald-500 z-50 transition-all duration-150" style="width: 0%"></div>
+
+    <!-- Hero Section -->
+    <header class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6">
+        <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-emerald-600/20 blur-[120px] rounded-full mix-blend-screen"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full mix-blend-screen"></div>
+        
+        <div class="fade-in-section text-center z-10 max-w-4xl">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 mb-8 text-emerald-400 font-medium text-sm">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> Curso Introductorio
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                Finanzas Personales <span class="text-emerald-500">101</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-400 mb-12 leading-relaxed">
+                Tu guía interactiva para entender el dinero y pasar de ahorrador a inversionista con confianza.
+            </p>
+            <div class="animate-bounce mt-16 text-slate-500 flex justify-center">
+                <i data-lucide="chevron-down" class="w-8 h-8"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Ahorrar vs Invertir -->
+    <section class="py-24 px-6 md:px-12 max-w-6xl mx-auto border-t border-slate-800/50">
+        <div class="fade-in-section">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">Ahorrar vs. Invertir</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="fade-in-section delay-100 h-full bg-slate-900 border border-slate-800 p-10 rounded-3xl hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 group">
+                <div class="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i data-lucide="piggy-bank" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold mb-4 text-slate-100">Ahorrar</h3>
+                <p class="text-slate-400 text-lg leading-relaxed">
+                    Guardar tu dinero en efectivo o en una cuenta tradicional. Brinda seguridad a corto plazo, pero tu dinero se queda estancado y <span class="text-red-400 font-medium">pierde su valor</span> silenciosamente por la inflación.
+                </p>
+            </div>
+
+            <div class="fade-in-section delay-300 h-full bg-emerald-950/20 border border-emerald-900/30 p-10 rounded-3xl hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 shadow-[0_0_30px_rgba(16,185,129,0.05)] group">
+                <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i data-lucide="trending-up" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold mb-4 text-emerald-400">Invertir</h3>
+                <p class="text-slate-300 text-lg leading-relaxed">
+                    Poner tu dinero a trabajar para ti. El objetivo es generar rendimientos adicionales y <span class="text-emerald-400 font-medium">proteger tu riqueza</span>, haciendo que crezca más rápido que los precios.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inflación -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900/50 border-y border-slate-800/50">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="fade-in-section">
+                <h2 class="text-4xl md:text-5xl font-bold mb-8">El Ladrón Silencioso:<br/><span class="text-red-500">La Inflación</span></h2>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="mt-1 text-red-500"><i data-lucide="alert-circle"></i></div>
+                        <p class="text-lg text-slate-300">Es el aumento generalizado de los precios en el tiempo.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1 text-red-500"><i data-lucide="alert-circle"></i></div>
+                        <p class="text-lg text-slate-300">Con $100 pesos hoy compras menos que hace cinco años.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="mt-1 text-emerald-500"><i data-lucide="shield-check"></i></div>
+                        <p class="text-lg text-slate-300 font-medium">Invertir es el único escudo efectivo para vencerla.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fade-in-section delay-200 relative">
+                <!-- Ilustración SVG embebida para Inflación -->
+                <div class="aspect-square rounded-full border border-dashed border-slate-700 flex items-center justify-center relative overflow-hidden bg-slate-900">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-red-500/10 to-transparent rounded-full animate-pulse z-0"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-1/2 h-1/2 z-10 relative drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        <path d="M12 6l0 8"></path>
+                        <path d="M9 11l3 3 3-3"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulación Interactiva -->
+    <section class="py-24 px-6 md:px-12 max-w-5xl mx-auto">
+        <div class="fade-in-section text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Carrera a los $240,000</h2>
+            <p class="text-xl text-slate-400">Meta: 24 meses depositando $10,000 mensuales.</p>
+        </div>
+
+        <div class="fade-in-section delay-200">
+            <div class="bg-slate-900 p-8 md:p-12 rounded-3xl border border-slate-800 shadow-xl">
+                
+                <!-- Ahorrador Bar -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="text-xl font-semibold flex items-center gap-2"><i data-lucide="piggy-bank" class="w-5 h-5"></i> Ahorrador</h4>
+                        <span id="ahorrador-amount" class="text-2xl font-bold text-slate-300 transition-all">$0</span>
+                    </div>
+                    <div class="h-12 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div id="ahorrador-bar" class="h-full bg-slate-500 transition-all duration-1000 ease-out flex items-center justify-end pr-4 text-sm font-bold w-0">
+                            <!-- El texto se inyecta via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inversionista Bar -->
+                <div class="mb-12">
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="text-xl font-semibold text-emerald-400 flex items-center gap-2"><i data-lucide="trending-up" class="w-5 h-5"></i> Inversionista (9% anual)</h4>
+                        <span id="inv-amount" class="text-3xl font-bold text-emerald-400 transition-all">$0</span>
+                    </div>
+                    <div class="h-12 w-full bg-slate-800 rounded-full overflow-hidden relative">
+                        <div id="inv-bar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-1000 ease-out flex items-center justify-end pr-4 text-sm font-bold shadow-[0_0_20px_rgba(16,185,129,0.5)] w-0">
+                             <!-- El texto se inyecta via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button id="sim-btn" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-4 px-8 rounded-full transition-all hover:scale-105 active:scale-95">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                        <span id="sim-btn-text">Ejecutar Simulación</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interés Compuesto & Activos/Pasivos -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900 border-y border-slate-800">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
+            
+            <div class="fade-in-section">
+                <h3 class="text-3xl font-bold mb-6 text-emerald-400">El Interés Compuesto</h3>
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                    Conocido como "el efecto bola de nieve". Generas rendimientos no solo sobre tu capital original, sino también <strong>sobre los intereses que ya generaste</strong>.
+                </p>
+                <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 font-mono text-xl text-center shadow-inner">
+                    <span class="text-slate-400">CF = </span> 
+                    <span class="text-emerald-400">CI</span> 
+                    <span class="text-slate-500"> × </span> 
+                    <span class="text-blue-400">(1 + r)</span>
+                    <sup class="text-slate-400 text-sm">t</sup>
+                </div>
+                
+                <!-- Gráfica SVG de Interés Compuesto -->
+                <div class="mt-8 flex justify-center">
+                     <div class="w-full max-w-md h-64 rounded-2xl border border-slate-800/50 bg-slate-950 p-4 pt-10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.1)] relative overflow-hidden group">
+                         
+                         <!-- Cuadrícula de fondo -->
+                         <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] opacity-30"></div>
+                         
+                         <!-- Leyenda -->
+                         <div class="absolute top-4 left-6 flex flex-col gap-2 text-[11px] font-medium text-slate-400 uppercase tracking-wider z-20">
+                             <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-sm bg-blue-500 opacity-80"></div> Tus Aportaciones</span>
+                             <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-sm bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div> Rendimientos Generados</span>
+                         </div>
+
+                         <!-- SVG Gráfica -->
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" class="w-full h-full relative z-10 drop-shadow-[0_5px_15px_rgba(16,185,129,0.3)]">
+                             <defs>
+                                 <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
+                                     <stop offset="0%" stop-color="#10B981" stop-opacity="0.4"/>
+                                     <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+                                 </linearGradient>
+                             </defs>
+                             
+                             <!-- Línea base -->
+                             <line x1="10" y1="200" x2="290" y2="200" stroke="#334155" stroke-width="2" stroke-linecap="round"/>
+                             
+                             <!-- Sombra de la curva -->
+                             <path d="M45,170 C90,165 140,140 185,90 C220,50 240,25 255,20 L255,200 L45,200 Z" fill="url(#growthGradient)" class="opacity-70 group-hover:opacity-100 transition-opacity duration-700"/>
+                             
+                             <!-- Barras Año 1 -->
+                             <rect x="30" y="175" width="30" height="25" fill="#3B82F6" opacity="0.6"/>
+                             <rect x="30" y="170" width="30" height="8" fill="#10B981" rx="2" class="group-hover:-translate-y-1 transition-transform duration-300"/>
+                             
+                             <!-- Barras Año 2 -->
+                             <rect x="100" y="160" width="30" height="40" fill="#3B82F6" opacity="0.6"/>
+                             <rect x="100" y="140" width="30" height="23" fill="#10B981" rx="2" class="group-hover:-translate-y-1 transition-transform duration-300 delay-75"/>
+                             
+                             <!-- Barras Año 3 -->
+                             <rect x="170" y="145" width="30" height="55" fill="#3B82F6" opacity="0.6"/>
+                             <rect x="170" y="90" width="30" height="58" fill="#10B981" rx="2" class="group-hover:-translate-y-1 transition-transform duration-300 delay-150"/>
+                             
+                             <!-- Barras Año 4 (¡El interés supera al capital!) -->
+                             <rect x="240" y="130" width="30" height="70" fill="#3B82F6" opacity="0.6"/>
+                             <rect x="240" y="20" width="30" height="113" fill="#10B981" rx="2" class="group-hover:-translate-y-1 transition-transform duration-300 delay-200"/>
+                             
+                             <!-- Curva Exponencial -->
+                             <path d="M45,170 C90,165 140,140 185,90 C220,50 240,25 255,20" fill="none" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+                             
+                             <!-- Puntos de la curva -->
+                             <circle cx="45" cy="170" r="4" fill="#020617" stroke="#10B981" stroke-width="3"/>
+                             <circle cx="115" cy="140" r="4" fill="#020617" stroke="#10B981" stroke-width="3"/>
+                             <circle cx="185" cy="90" r="4" fill="#020617" stroke="#10B981" stroke-width="3"/>
+                             <circle cx="255" cy="20" r="6" fill="#10B981" stroke="#fff" stroke-width="2" class="animate-pulse"/>
+                         </svg>
+                     </div>
+                </div>
+            </div>
+
+            <div class="fade-in-section delay-200">
+                <div class="grid grid-cols-2 gap-6 h-full">
+                    <div class="bg-emerald-950/30 p-6 rounded-3xl border border-emerald-900/50 flex flex-col justify-center text-center sm:text-left items-center sm:items-start">
+                        <i data-lucide="arrow-up-right" class="text-emerald-500 mb-4 w-10 h-10"></i>
+                        <h4 class="text-2xl font-bold text-emerald-400 mb-2">Activos</h4>
+                        <p class="text-sm text-slate-300">Meten dinero a tu bolsillo (Acciones, CETES, rentas). <strong>Te enriquecen.</strong></p>
+                    </div>
+                    <div class="bg-red-950/30 p-6 rounded-3xl border border-red-900/50 flex flex-col justify-center text-center sm:text-left items-center sm:items-start">
+                        <i data-lucide="arrow-down-right" class="text-red-500 mb-4 w-10 h-10"></i>
+                        <h4 class="text-2xl font-bold text-red-400 mb-2">Pasivos</h4>
+                        <p class="text-sm text-slate-300">Sacan dinero de tu bolsillo (Deudas de consumo, autos). <strong>Te empobrecen.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Diversificación -->
+    <section class="py-24 px-6 md:px-12 max-w-6xl mx-auto text-center">
+        <div class="fade-in-section">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16">Regla de Oro: <span class="text-blue-400">Diversificar</span></h2>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="fade-in-section delay-100 bg-slate-900 p-8 rounded-3xl border border-slate-800 hover:bg-slate-800 transition-colors h-full flex flex-col items-center">
+                <div class="bg-blue-500/10 p-4 rounded-full text-blue-400 mb-6">
+                    <i data-lucide="shield-alert" class="w-9 h-9"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Mitiga Riesgos</h3>
+                <p class="text-slate-400">Si una inversión baja, el buen desempeño de las otras protegerá tu dinero.</p>
+            </div>
+            
+            <div class="fade-in-section delay-200 bg-slate-900 p-8 rounded-3xl border border-slate-800 hover:bg-slate-800 transition-colors h-full flex flex-col items-center">
+                <div class="bg-blue-500/10 p-4 rounded-full text-blue-400 mb-6">
+                    <i data-lucide="scale" class="w-9 h-9"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Equilibrio</h3>
+                <p class="text-slate-400">Combina instrumentos seguros (renta fija) con potencial de crecimiento (renta variable).</p>
+            </div>
+            
+            <div class="fade-in-section delay-300 bg-slate-900 p-8 rounded-3xl border border-slate-800 hover:bg-slate-800 transition-colors h-full flex flex-col items-center">
+                <div class="bg-blue-500/10 p-4 rounded-full text-blue-400 mb-6">
+                    <i data-lucide="globe" class="w-9 h-9"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Oportunidades</h3>
+                <p class="text-slate-400">Distribuye tu capital en diferentes sectores, países y monedas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CETES Section -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900/50 border-t border-slate-800 relative">
+        <div class="absolute left-0 bottom-0 w-96 h-96 bg-emerald-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div class="max-w-6xl mx-auto">
+            <div class="fade-in-section text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">CETES: <span class="text-emerald-500">La Inversión Más Segura</span></h2>
+                <p class="text-xl text-slate-400 max-w-2xl mx-auto">El punto de partida ideal para cualquier inversionista en México.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Info Column -->
+                <div class="space-y-6">
+                    <div class="fade-in-section delay-100 bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500/30 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                                <i data-lucide="landmark" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-100">¿Qué son?</h3>
+                        </div>
+                        <p class="text-slate-400 text-lg leading-relaxed">
+                            Son <strong class="text-slate-200">Certificados de la Tesorería de la Federación</strong>. Básicamente, le prestas tu dinero al gobierno mexicano para que financie sus proyectos. A cambio, ellos se comprometen a devolverte tu dinero más un rendimiento al finalizar un plazo establecido.
+                        </p>
+                    </div>
+
+                    <div class="fade-in-section delay-200 bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-blue-500/30 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
+                                <i data-lucide="shield-check" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-100">¿Por qué son tan seguros?</h3>
+                        </div>
+                        <p class="text-slate-400 text-lg leading-relaxed">
+                            Porque están respaldados directamente por el Gobierno Federal de México y los impuestos del país. Se considera que el riesgo de que no te paguen (riesgo de impago) es prácticamente nulo.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Rates Grid Column -->
+                <div class="fade-in-section delay-300">
+                    <div class="bg-slate-950 border border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.05)]">
+                        <div class="flex justify-between items-end mb-8 border-b border-slate-800 pb-4">
+                            <h3 class="text-2xl font-bold text-slate-100">Tasas de Rendimiento</h3>
+                            <span class="text-sm text-slate-500 flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4"></i> 27 Febrero 2026
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Rate Items -->
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center hover:bg-slate-800 transition-colors">
+                                <span class="text-slate-400 font-medium">1 mes</span>
+                                <span class="text-2xl font-bold text-emerald-400">6.83%</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center hover:bg-slate-800 transition-colors">
+                                <span class="text-slate-400 font-medium">3 meses</span>
+                                <span class="text-2xl font-bold text-emerald-400">7.05%</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center hover:bg-slate-800 transition-colors">
+                                <span class="text-slate-400 font-medium">6 meses</span>
+                                <span class="text-2xl font-bold text-emerald-400">7.05%</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center hover:bg-slate-800 transition-colors">
+                                <span class="text-slate-400 font-medium">1 año</span>
+                                <span class="text-2xl font-bold text-emerald-400">7.22%</span>
+                            </div>
+                            <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-5 flex justify-between items-center bg-gradient-to-r from-slate-900 to-emerald-950/20 sm:col-span-2 hover:border-emerald-500/60 transition-colors shadow-inner">
+                                <span class="text-emerald-100 font-medium flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-emerald-500"></i> 2 años (Mayor Tasa)</span>
+                                <span class="text-3xl font-black text-emerald-400">7.54%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900/80 border-t border-slate-800 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 blur-[100px] rounded-full"></div>
+        
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="fade-in-section text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Top 10 Cuentas a la Vista</h2>
+                <p class="text-xl text-slate-400">Dónde poner tu dinero a trabajar hoy mismo (Liquidez diaria a Febrero 2026).</p>
+            </div>
+
+            <div class="space-y-4">
+                
+                <!-- Card 1: DiDi -->
+                <div class="fade-in-section delay-100 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-lg">1</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#F97316;">
+                            <text x="50%" y="55%" fill="white" font-size="32" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">DiDi</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#1</span> DiDi
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="zap" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $10,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">16%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Ualá -->
+                <div class="fade-in-section delay-200 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-gradient-to-br from-slate-300 to-slate-500 text-white">2</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#1E3A8A;">
+                            <text x="50%" y="55%" fill="white" font-size="28" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Ualá</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#2</span> Ualá
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="banknote" class="w-3.5 h-3.5"></i> Gastando $6,000 al mes
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $30,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">15%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Revolut -->
+                <div class="fade-in-section delay-300 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-gradient-to-br from-amber-700 to-amber-900 text-white">3</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#000;">
+                            <text x="50%" y="55%" fill="white" font-size="28" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Revolut</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#3</span> Revolut
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="globe" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $25,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">15%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Klar Plus -->
+                <div class="fade-in-section delay-400 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">4</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#0F766E;">
+                            <text x="50%" y="55%" fill="white" font-size="32" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Klar</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#4</span> Klar Plus
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Gastando $3,000 al mes
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $25,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">15%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+                
+                <!-- Card 5: Nu -->
+                <div class="fade-in-section delay-500 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">5</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#8B5CF6;">
+                            <text x="50%" y="55%" fill="white" font-size="36" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Nu</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#5</span> Nu
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> 1 compra al mes
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $25,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">13%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Mercado Pago -->
+                <div class="fade-in-section delay-100 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">6</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#FBBF24;">
+                            <text x="50%" y="55%" fill="#000" font-size="32" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">MP</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#6</span> Mercado Pago
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i> Ingresando $3,000 al mes
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $25,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">13%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 7: Mifel -->
+                <div class="fade-in-section delay-200 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">7</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#1E3A8A;">
+                            <text x="50%" y="55%" fill="white" font-size="28" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Mifel</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#7</span> Mifel
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Tope: $500,000 MXN</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">10%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 8: Openbank -->
+                <div class="fade-in-section delay-300 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">8</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#000;">
+                            <text x="50%" y="55%" fill="#EF4444" font-size="24" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Open</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#8</span> Openbank
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Sin tope especificado</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">9%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 9: Stori -->
+                <div class="fade-in-section delay-400 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">9</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#10B981;">
+                            <text x="50%" y="55%" fill="white" font-size="32" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Stori</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#9</span> Stori
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Sin tope especificado</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">7.23%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+                <!-- Card 10: Crediclub Supertasas -->
+                <div class="fade-in-section delay-500 group flex flex-col sm:flex-row items-start sm:items-center bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="hidden sm:flex w-10 h-10 rounded-full items-center justify-center font-bold mr-6 shrink-0 bg-slate-800 text-slate-400">10</div>
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-1 shrink-0 mr-6 mb-4 sm:mb-0">
+                        <svg viewBox="0 0 100 100" class="w-full h-full rounded-lg" style="background:#2563EB;">
+                            <text x="50%" y="55%" fill="white" font-size="20" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">Crediclub</text>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <span class="sm:hidden text-slate-500">#10</span> Crediclub Supertasas
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
+                            <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-medium">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Rendimiento base
+                            </span>
+                            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="infinity" class="w-3.5 h-3.5"></i> Sin tope especificado</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 sm:ml-6 sm:pl-6 sm:border-l border-slate-800 text-left sm:text-right min-w-[120px]">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400">7%</div>
+                        <div class="text-xs tracking-widest text-slate-500 uppercase mt-1">Anual</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FIBRAS Section -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900 border-y border-slate-800 relative overflow-hidden">
+        <div class="absolute right-0 top-1/4 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="fade-in-section text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">FIBRAS: <span class="text-blue-400">Dueño de Bienes Raíces</span></h2>
+                <p class="text-xl text-slate-400 max-w-2xl mx-auto">Invierte en plazas comerciales y naves industriales desde $11 pesos.</p>
+            </div>
+
+            <!-- Concept & Taxes -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <div class="fade-in-section delay-100 bg-slate-950 border border-slate-800 p-8 rounded-3xl hover:border-blue-500/30 transition-colors">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
+                            <i data-lucide="building" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-100">¿Qué son las FIBRAS?</h3>
+                    </div>
+                    <p class="text-slate-400 text-lg leading-relaxed mb-4">
+                        Son <strong>Fideicomisos de Infraestructura y Bienes Raíces</strong>. Imagina que muchas personas juntan su dinero para comprar hoteles, naves industriales o centros comerciales. 
+                    </p>
+                    <p class="text-slate-400 text-lg leading-relaxed">
+                        Al comprar un "certificado" en tu app de inversiones, te vuelves socio proporcional y tienes derecho a cobrar una parte de las rentas millonarias de esos inmuebles.
+                    </p>
+                </div>
+                
+                <div class="fade-in-section delay-200 bg-slate-950 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500/30 transition-colors">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                            <i data-lucide="percent" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-100">Beneficios Fiscales Mágicos</h3>
+                    </div>
+                    <ul class="space-y-5 text-slate-400 text-lg">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-500 shrink-0 mt-0.5"></i>
+                            <span><strong>Cero impuestos al vender:</strong> Si el certificado sube de valor y lo vendes más caro, esa ganancia de capital es 100% libre de impuestos en México.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-500 shrink-0 mt-0.5"></i>
+                            <span><strong>Retorno de Capital:</strong> Una porción de las rentas que te reparten se clasifica así, por lo que llega a tu cuenta de banco sin ninguna retención de ISR.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Real Example -->
+            <div class="fade-in-section delay-300 mb-20">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-3xl p-8 sm:p-10 relative overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+                    <div class="absolute right-0 top-0 opacity-10">
+                        <i data-lucide="factory" class="w-64 h-64 -mt-10 -mr-10"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-slate-100 mb-8 flex items-center gap-3 relative z-10">
+                        <i data-lucide="search" class="text-blue-400"></i> Ejemplo Real: Fibra Monterrey (FMTY14)
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
+                        <div class="bg-slate-950/50 p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                            <div class="text-sm text-slate-400 mb-2">Costo por Certificado</div>
+                            <div class="text-3xl font-bold text-emerald-400">$15.26 <span class="text-lg font-normal text-slate-500">MXN</span></div>
+                            <div class="text-sm text-slate-500 mt-2 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Precio actualizado a 2026</div>
+                        </div>
+                        <div class="bg-slate-950/50 p-6 rounded-2xl border border-slate-700/50 hover:border-blue-500/30 transition-colors">
+                            <div class="text-sm text-slate-400 mb-2">Sector Principal</div>
+                            <div class="text-xl font-bold text-slate-200 mt-2 leading-tight">Naves Industriales y Oficinas</div>
+                        </div>
+                        <div class="bg-slate-950/50 p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                            <div class="text-sm text-slate-400 mb-2">Rentas Pagadas (Últimos 5 Años)</div>
+                            <div class="text-3xl font-bold text-blue-400">+$4.86 <span class="text-lg font-normal text-slate-500">MXN</span></div>
+                            <div class="text-sm text-emerald-500 mt-2 font-medium bg-emerald-500/10 px-2 py-1 rounded inline-block">¡Recuperaste más del 30% del costo!</div>
+                        </div>
+                        <div class="bg-slate-950/50 p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                            <div class="text-sm text-slate-400 mb-2">Plusvalía (5 años)</div>
+                            <div class="text-3xl font-bold text-slate-200">33.6%</div>
+                            <div class="text-sm text-slate-500 mt-2 leading-tight">Ganancia en el valor del certificado, aparte de las rentas.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison -->
+            <div class="fade-in-section delay-400">
+                <div class="text-center mb-10">
+                    <h3 class="text-3xl font-bold text-slate-100 mb-4">La Gran Reflexión: ¿Casa o FIBRAS?</h3>
+                    <p class="text-slate-400 text-lg">Tienes $2,000,000 MXN para invertir en bienes raíces. ¿Qué te conviene más?</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 relative">
+                    <!-- VS Badge -->
+                    <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-slate-950 border-4 border-slate-800 rounded-full items-center justify-center font-black text-xl text-slate-500 z-10 shadow-xl">
+                        VS
+                    </div>
+
+                    <!-- Casa -->
+                    <div class="bg-slate-950 border border-slate-800 p-8 sm:p-10 rounded-3xl">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h4 class="text-2xl font-bold text-slate-100">Comprar una Casa</h4>
+                                <p class="text-slate-500">Para rentar de forma tradicional</p>
+                            </div>
+                            <div class="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-slate-400">
+                                <i data-lucide="home"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="text-4xl font-bold text-slate-200 mb-8 border-b border-slate-800 pb-8">
+                            $8,000 <span class="text-lg font-normal text-slate-500">/ mes (Renta del 4.8%)</span>
+                        </div>
+
+                        <ul class="space-y-5">
+                            <li class="flex items-center gap-4 text-red-400/80">
+                                <i data-lucide="x" class="w-6 h-6 shrink-0"></i> <span class="text-lg">Descapitalización total (pierdes liquidez)</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-red-400/80">
+                                <i data-lucide="x" class="w-6 h-6 shrink-0"></i> <span class="text-lg">Gastos de escrituración (~7% inicial)</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-red-400/80">
+                                <i data-lucide="x" class="w-6 h-6 shrink-0"></i> <span class="text-lg">Mantenimiento, seguros y predial a tu cargo</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-red-400/80">
+                                <i data-lucide="x" class="w-6 h-6 shrink-0"></i> <span class="text-lg">Riesgo de inquilinos morosos o meses vacíos</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- FIBRAS -->
+                    <div class="bg-slate-900 border border-emerald-900/50 p-8 sm:p-10 rounded-3xl shadow-[0_0_40px_rgba(16,185,129,0.05)] relative overflow-hidden transition-transform hover:-translate-y-1 duration-300">
+                        <div class="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 blur-[60px] rounded-full"></div>
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <div>
+                                <h4 class="text-2xl font-bold text-emerald-400">Comprar FIBRAS</h4>
+                                <p class="text-slate-400">Portafolio institucional diversificado</p>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="text-4xl font-bold text-emerald-400 mb-8 border-b border-slate-700/50 pb-8 relative z-10">
+                            $15,000 <span class="text-lg font-normal text-emerald-500/50">/ mes (Rendimiento 9%)</span>
+                        </div>
+
+                        <ul class="space-y-5 relative z-10">
+                            <li class="flex items-center gap-4 text-emerald-400/90">
+                                <i data-lucide="check" class="w-6 h-6 shrink-0 text-emerald-500"></i> <span class="text-lg text-emerald-50">Totalmente pasivo (expertos lo administran)</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-emerald-400/90">
+                                <i data-lucide="check" class="w-6 h-6 shrink-0 text-emerald-500"></i> <span class="text-lg text-emerald-50">Alta liquidez (vendes partes con un clic)</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-emerald-400/90">
+                                <i data-lucide="check" class="w-6 h-6 shrink-0 text-emerald-500"></i> <span class="text-lg text-emerald-50">Beneficios fiscales (Retorno de capital)</span>
+                            </li>
+                            <li class="flex items-center gap-4 text-emerald-400/90">
+                                <i data-lucide="check" class="w-6 h-6 shrink-0 text-emerald-500"></i> <span class="text-lg text-emerald-50">Diversificado en múltiples propiedades top</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Las Reglas del Oro -->
+    <section class="py-24 px-6 md:px-12 bg-slate-950 relative overflow-hidden">
+        <!-- Fondo resplandeciente -->
+        <div class="absolute left-1/4 top-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="absolute right-0 bottom-0 w-64 h-64 bg-amber-700/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-5 gap-12 items-center">
+            
+            <!-- SVG Illustration -->
+            <div class="lg:col-span-2 fade-in-section flex justify-center mb-10 lg:mb-0">
+                <div class="relative w-64 h-64 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full animate-pulse"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full drop-shadow-[0_0_20px_rgba(245,158,11,0.5)] relative z-10">
+                        <!-- Monedas apiladas -->
+                        <ellipse cx="12" cy="18" rx="8" ry="3" fill="#B45309" opacity="0.3"></ellipse>
+                        <path d="M4 18v-4c0 1.66 3.58 3 8 3s8-1.34 8-3v4c0 1.66-3.58 3-8 3s-8-1.34-8-3z" fill="#F59E0B" opacity="0.1"></path>
+                        <ellipse cx="12" cy="14" rx="8" ry="3" fill="#B45309" opacity="0.4"></ellipse>
+                        <path d="M4 14v-4c0 1.66 3.58 3 8 3s8-1.34 8-3v4c0 1.66-3.58 3-8 3s-8-1.34-8-3z" fill="#F59E0B" opacity="0.2"></path>
+                        <ellipse cx="12" cy="10" rx="8" ry="3" fill="#B45309" opacity="0.5"></ellipse>
+                        <path d="M4 10V6c0 1.66 3.58 3 8 3s8-1.34 8-3v4c0 1.66-3.58 3-8 3s-8-1.34-8-3z" fill="#F59E0B" opacity="0.3"></path>
+                        <ellipse cx="12" cy="6" rx="8" ry="3" fill="#FDE68A"></ellipse>
+                        <!-- Destellos -->
+                        <path d="M19 3l1 1-1 1-1-1 1-1z" fill="#FCD34D" stroke="none"></path>
+                        <path d="M5 5l1.5 1.5-1.5 1.5L3.5 6.5 5 5z" fill="#FCD34D" stroke="none"></path>
+                        <path d="M21 10l1 1-1 1-1-1 1-1z" fill="#FCD34D" stroke="none"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Rules List -->
+            <div class="lg:col-span-3 space-y-8">
+                <div class="fade-in-section mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-100">Las 5 Leyes del <span class="text-amber-400">Oro</span></h2>
+                    <p class="text-xl text-amber-500/80 italic font-medium">La sabiduría milenaria de Babilonia para construir riqueza.</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Rule 1 -->
+                    <div class="fade-in-section delay-100 flex gap-6">
+                        <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl font-bold shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">1</div>
+                        <p class="text-slate-300 text-lg leading-relaxed pt-2">
+                            El oro acude fácilmente, en cantidades más importantes, al hombre que reserva no menos de una <strong class="text-slate-100">décima parte de sus ganancias</strong> para crear un bien en previsión de su futuro y el de su familia.
+                        </p>
+                    </div>
+
+                    <!-- Rule 2 -->
+                    <div class="fade-in-section delay-200 flex gap-6">
+                        <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl font-bold shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">2</div>
+                        <p class="text-slate-300 text-lg leading-relaxed pt-2">
+                            El oro <strong class="text-slate-100">trabaja con diligencia y de forma rentable</strong> para el poseedor sabio que le encuentra un uso provechoso, multiplicándose incluso como los rebaños en los campos.
+                        </p>
+                    </div>
+
+                    <!-- Rule 3 -->
+                    <div class="fade-in-section delay-300 flex gap-6">
+                        <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl font-bold shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">3</div>
+                        <p class="text-slate-300 text-lg leading-relaxed pt-2">
+                            El oro permanece bajo la protección del poseedor prudente que lo invierte <strong class="text-slate-100">según los consejos de hombres sabios</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Rule 4 -->
+                    <div class="fade-in-section delay-400 flex gap-6">
+                        <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl font-bold shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">4</div>
+                        <p class="text-slate-300 text-lg leading-relaxed pt-2">
+                            El oro escapa al hombre que invierte sin fin alguno en empresas que <strong class="text-slate-100">no le son familiares</strong> o que no son aprobadas por aquellos que conocen la forma de utilizar el oro.
+                        </p>
+                    </div>
+
+                    <!-- Rule 5 -->
+                    <div class="fade-in-section delay-500 flex gap-6">
+                        <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl font-bold shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">5</div>
+                        <p class="text-slate-300 text-lg leading-relaxed pt-2">
+                            El oro huye del hombre que lo fuerza en ganancias imposibles, que sigue el <strong class="text-slate-100">seductor consejo de defraudadores</strong> y estafadores o que se fía de su propia inexperiencia.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-24 px-6 md:px-12 text-center bg-slate-950 border-t border-slate-800 relative">
+        <div class="fade-in-section">
+            <h2 class="text-3xl md:text-5xl font-bold mb-12">El mejor momento para empezar<br/>fue hace 10 años. <span class="text-emerald-500 block mt-4">El segundo mejor momento es hoy.</span></h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 mt-12 text-slate-400 font-medium">
+                <span class="px-6 py-3 rounded-full bg-slate-900 border border-slate-800">1. Haz un presupuesto</span>
+                <span class="px-6 py-3 rounded-full bg-slate-900 border border-slate-800">2. Crea un fondo de paz</span>
+                <span class="px-6 py-3 rounded-full bg-emerald-900/30 border border-emerald-800/50 text-emerald-400">3. ¡Abre tu cuenta e invierte!</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica de Interactividad en Vanilla JS -->
+    <script>
+        // 1. Inicializar íconos de Lucide
+        lucide.createIcons();
+
+        // 2. Lógica para la Barra de Progreso Superior
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollProgress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progress-bar').style.width = scrollProgress + '%';
+        });
+
+        // 3. Lógica para Animaciones al Scroll (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15 // El elemento debe ser 15% visible para animarse
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Opcional: Descomenta la siguiente línea si quieres que la animación ocurra solo 1 vez
+                    // observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // 4. Lógica para el Simulador
+        const simBtn = document.getElementById('sim-btn');
+        let simulated = false;
+
+        simBtn.addEventListener('click', () => {
+            simulated = !simulated;
+            
+            // Actualizar Textos
+            document.getElementById('ahorrador-amount').innerText = simulated ? '$240,000' : '$0';
+            document.getElementById('inv-amount').innerText = simulated ? '$261,960' : '$0';
+            document.getElementById('sim-btn-text').innerText = simulated ? 'Reiniciar Simulación' : 'Ejecutar Simulación';
+            
+            // Actualizar Barras
+            const ahorradorBar = document.getElementById('ahorrador-bar');
+            const invBar = document.getElementById('inv-bar');
+            
+            ahorradorBar.style.width = simulated ? '80%' : '0%';
+            invBar.style.width = simulated ? '100%' : '0%';
+            
+            ahorradorBar.innerText = simulated ? 'Llegó justo' : '';
+            invBar.innerText = simulated ? '+ $21,960 Extra' : '';
+        });
+    </script>
+</body>
+</html>
