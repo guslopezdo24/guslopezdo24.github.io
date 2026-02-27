@@ -100,15 +100,52 @@
     <!-- Live Status & File Upload Banner -->
     <div class="fixed top-4 left-0 right-0 z-50 px-4 md:px-12 flex justify-between items-start pointer-events-none">
         
-        <!-- Controls (Pointer events auto so they are clickable) -->
-        <div class="flex flex-col sm:flex-row gap-3 pointer-events-auto">
-            <button onclick="downloadTemplate()" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-lg text-sm font-medium">
-                <i data-lucide="download" class="w-4 h-4"></i> Descargar Plantilla
+        <!-- Controls Container (Pointer events auto so they are clickable) -->
+        <div class="relative pointer-events-auto">
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 p-2.5 rounded-xl flex items-center justify-center transition-colors shadow-lg">
+                <i data-lucide="menu" class="w-5 h-5 text-emerald-400"></i>
             </button>
-            <label class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/50 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer text-sm font-medium">
-                <i data-lucide="upload" class="w-4 h-4"></i> Cargar Datos (CSV)
-                <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
-            </label>
+
+            <!-- Desktop Menu -->
+            <div class="hidden sm:flex flex-row gap-3 items-center">
+                <a href="index.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-lg text-sm font-medium group">
+                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Calculadora
+                </a>
+                <a href="finanzas101.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-lg text-sm font-medium group">
+                    <i data-lucide="book-open" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Finanzas 101
+                </a>
+                <div class="h-8 w-px bg-slate-800 mx-1"></div>
+                <button onclick="downloadTemplate()" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-lg text-sm font-medium">
+                    <i data-lucide="download" class="w-4 h-4"></i> Descargar Plantilla
+                </button>
+                <label class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/50 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer text-sm font-medium">
+                    <i data-lucide="upload" class="w-4 h-4"></i> Cargar Datos (CSV)
+                    <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
+                </label>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-menu" class="absolute top-full left-0 mt-3 w-64 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl flex-col gap-1 p-2 opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50 sm:hidden flex pointer-events-none">
+                <a href="index.html" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                    <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i></div>
+                    Calculadora
+                </a>
+                <a href="finanzas101.html" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                    <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i></div>
+                    Finanzas 101
+                </a>
+                <div class="h-px w-full bg-slate-800/80 my-1 pointer-events-auto"></div>
+                <button onclick="downloadTemplate(); toggleMobileMenu();" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full text-left pointer-events-auto">
+                    <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="download" class="w-4 h-4 text-slate-400"></i></div>
+                    Descargar Plantilla
+                </button>
+                <label class="bg-emerald-900/20 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-800/30 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors cursor-pointer text-sm font-medium w-full mt-1 pointer-events-auto">
+                    <div class="bg-emerald-500/10 p-1.5 rounded-lg"><i data-lucide="upload" class="w-4 h-4"></i></div>
+                    Cargar Datos (CSV)
+                    <input type="file" id="csvFileInputMobile" accept=".csv" class="hidden" onchange="handleFileUpload(event); toggleMobileMenu();">
+                </label>
+            </div>
         </div>
 
         <!-- Live Status -->
@@ -732,6 +769,30 @@ Tasa anual esperada del portafolio (%),9`;
         
         window.addEventListener('DOMContentLoaded', startApp);
 
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        function toggleMobileMenu() {
+            const isExpanded = mobileMenu.classList.contains('opacity-100');
+            if (isExpanded) {
+                mobileMenu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto', 'visible');
+                mobileMenu.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none', 'invisible');
+            } else {
+                mobileMenu.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto', 'visible');
+                mobileMenu.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none', 'invisible');
+            }
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('opacity-100')) {
+                    toggleMobileMenu();
+                }
+            });
+        }
     </script>
 </body>
 </html>

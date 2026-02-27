@@ -6,6 +6,7 @@
     <title>Inversión Inteligente | Finanzas 101</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -71,14 +72,34 @@
                     <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold" id="season-name">Interés Compuesto</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <a href="reportesalud.html" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold py-2 pl-3 pr-5 rounded-full transition-all hover:scale-105 active:scale-95 text-sm flex items-center gap-2 shadow-sm">
-                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-lg">🩺</span> 
-                    Salud Financiera
-                </a>
-                <a href="finanzas101.html" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-5 rounded-full transition-all hover:scale-105 active:scale-95 text-sm">
-                    Saber más de finanzas
-                </a>
+            <div class="relative pointer-events-auto">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="sm:hidden bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 p-2.5 rounded-xl flex items-center justify-center transition-colors shadow-lg">
+                    <i data-lucide="menu" class="w-5 h-5 text-emerald-400"></i>
+                </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden sm:flex flex-row gap-3 items-center">
+                    <a href="reportesalud.html" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold py-2 pl-3 pr-5 rounded-full transition-all hover:scale-105 active:scale-95 text-sm flex items-center gap-2 shadow-sm">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-lg">🩺</span> 
+                        Salud Financiera
+                    </a>
+                    <a href="finanzas101.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-lg text-sm font-bold group">
+                        <i data-lucide="book-open" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Finanzas 101
+                    </a>
+                </div>
+
+                <!-- Mobile Dropdown Menu -->
+                <div id="mobile-menu" class="absolute top-full right-0 mt-3 w-56 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl flex-col gap-1 p-2 opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50 sm:hidden flex pointer-events-none">
+                    <a href="reportesalud.html" class="hover:bg-slate-800 text-emerald-400 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-lg">🩺</span> 
+                        Salud Financiera
+                    </a>
+                    <a href="finanzas101.html" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                        <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i></div>
+                        Finanzas 101
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -364,7 +385,35 @@
         const inputs = ['initialCapital', 'annualRate', 'years', 'compoundFrequency', 'contributionAmount', 'contributionFrequency'];
         inputs.forEach(id => document.getElementById(id).addEventListener('input', calculate));
         
-        window.onload = calculate;
+        window.onload = () => {
+            calculate();
+            lucide.createIcons();
+        };
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        function toggleMobileMenu() {
+            const isExpanded = mobileMenu.classList.contains('opacity-100');
+            if (isExpanded) {
+                mobileMenu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto', 'visible');
+                mobileMenu.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none', 'invisible');
+            } else {
+                mobileMenu.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto', 'visible');
+                mobileMenu.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none', 'invisible');
+            }
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('opacity-100')) {
+                    toggleMobileMenu();
+                }
+            });
+        }
     </script>
 </body>
 </html>
