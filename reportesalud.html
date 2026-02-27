@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Salud Financiera (Dinámico)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            success: '#10B981',// Emerald
+                            debt: '#EF4444'    // Red
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Animaciones Scroll */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Custom Donut Chart Transitions */
+        .donut-segment {
+            transition: stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        stroke-width 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+        }
+        .donut-segment:hover {
+            stroke-width: 8;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        
+        /* Pulse dot for live status */
+        .live-dot {
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        
+        /* Skeleton loaders */
+        .skeleton {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            color: transparent !important;
+            border-radius: 0.25rem;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Highlight animation for refresh */
+        .highlight-update {
+            animation: highlight 1.5s ease-out;
+        }
+        @keyframes highlight {
+            0% { color: #10B981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.8); }
+            100% { color: inherit; text-shadow: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-50 min-h-screen selection:bg-brand-success/30 pb-20">
+
+    <!-- Progress Bar -->
+    <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-brand-success z-50 transition-all duration-150" style="width: 0%"></div>
+
+    <!-- Live Status & File Upload Banner -->
+    <div class="fixed top-4 left-0 right-0 z-50 px-4 md:px-12 flex justify-between items-start pointer-events-none">
+        
+        <!-- Controls (Pointer events auto so they are clickable) -->
+        <div class="flex flex-col sm:flex-row gap-3 pointer-events-auto">
+            <button onclick="downloadTemplate()" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-lg text-sm font-medium">
+                <i data-lucide="download" class="w-4 h-4"></i> Descargar Plantilla
+            </button>
+            <label class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/50 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer text-sm font-medium">
+                <i data-lucide="upload" class="w-4 h-4"></i> Cargar Datos (CSV)
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
+            </label>
+        </div>
+
+        <!-- Live Status -->
+        <div class="bg-slate-900/80 backdrop-blur-md border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-3 shadow-lg pointer-events-auto">
+            <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full live-dot"></div>
+            <div class="text-xs font-medium text-slate-300 flex flex-col">
+                <span>Mercado en Vivo</span>
+                <span class="text-[10px] text-slate-500" id="live-rate-display">Calculando USD/MXN...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Header -->
+    <header class="py-24 px-6 md:px-12 relative overflow-hidden flex flex-col items-center justify-center min-h-[60vh] border-b border-slate-800 mt-10">
+        <div class="absolute top-0 w-[80%] h-[80%] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+        
+        <div class="fade-in-section text-center z-10 w-full max-w-5xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Reporte de <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Salud Financiera</span></h1>
+            <p class="text-lg md:text-xl text-slate-400 mb-12" id="hero-subtitle">Portafolio actualizado con cotización en tiempo real.</p>
+            
+            <div class="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-3xl inline-block shadow-2xl relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-success/0 via-brand-success/10 to-brand-success/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <p class="text-slate-400 text-sm uppercase tracking-widest font-semibold mb-2">Patrimonio Total Actual (Activos)</p>
+                <div id="total-patrimonio" class="text-5xl md:text-7xl font-black text-slate-100 font-mono tracking-tight skeleton">Calculando...</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: Estado Actual (Donut Chart) -->
+    <section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="fade-in-section mb-12 text-center md:text-left">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 flex items-center justify-center md:justify-start gap-3">
+                <i data-lucide="pie-chart" class="text-blue-500"></i> Distribución del Portafolio
+            </h2>
+            <p class="text-slate-400 text-lg">Visión detallada de los activos. Generada dinámicamente desde el CSV.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- Interacive SVG Donut Chart (Dynamic) -->
+            <div class="fade-in-section delay-100 relative w-full aspect-square max-w-md mx-auto">
+                <svg id="donut-svg" viewBox="0 0 42 42" class="w-full h-full drop-shadow-[0_0_30px_rgba(59,130,246,0.15)] -rotate-90">
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#1e293b" stroke-width="4"></circle>
+                    <!-- Elements will be injected here via JS -->
+                </svg>
+                <!-- Center Info -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-slate-400 text-sm font-medium">Instrumentos</span>
+                    <span id="donut-center-count" class="text-4xl font-bold text-slate-100 font-mono">0</span>
+                </div>
+            </div>
+
+            <!-- Data Table/List (Dynamic) -->
+            <div class="fade-in-section delay-200">
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+                    <div class="px-6 py-4 border-b border-slate-800 bg-slate-950 flex justify-between text-xs uppercase tracking-wider text-slate-500 font-bold">
+                        <span>Institución / Activo</span>
+                        <span>Monto (MXN)</span>
+                    </div>
+                    <div id="assets-list" class="divide-y divide-slate-800/50 max-h-[400px] overflow-y-auto pr-1">
+                        <!-- Asset items injected here -->
+                        <div class="px-6 py-4 skeleton text-transparent">Cargando datos...</div>
+                        <div class="px-6 py-4 skeleton text-transparent">Cargando datos...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Diversificación y Deuda -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900 border-y border-slate-800 relative">
+        <div class="absolute right-0 top-0 w-96 h-96 bg-red-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="grid lg:grid-cols-2 gap-16">
+                <!-- Diversificación de Activos (100% Dinámica) -->
+                <div class="fade-in-section">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2"><i data-lucide="layers" class="text-purple-400"></i> Nivel de Diversificación</h3>
+                    <div class="bg-slate-950 border border-slate-800 rounded-3xl p-8 shadow-inner relative">
+                        
+                        <!-- Dynamic Bar chart -->
+                        <div id="diversification-bar" class="h-8 w-full bg-slate-800 rounded-full overflow-hidden flex mb-6 shadow-md transition-all">
+                            <!-- Inyectado por JS basado en Categorías del CSV -->
+                            <div class="h-full bg-slate-700 w-full skeleton"></div>
+                        </div>
+                        
+                        <div id="diversification-list" class="space-y-0">
+                            <!-- Inyectado por JS basado en Categorías del CSV -->
+                            <div class="skeleton h-10 w-full mb-2"></div>
+                            <div class="skeleton h-10 w-full mb-2"></div>
+                        </div>
+
+                        <div class="mt-8 p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl flex gap-4">
+                            <i data-lucide="info" class="text-blue-400 shrink-0 mt-1"></i>
+                            <p class="text-sm text-slate-300">Balance actual agrupado automáticamente a partir de la columna "Categoría" de tu archivo CSV.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Análisis de Deuda -->
+                <div class="fade-in-section delay-200">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2"><i data-lucide="credit-card" class="text-red-400"></i> Análisis de Endeudamiento</h3>
+                    <div class="bg-slate-950 border border-slate-800 rounded-3xl p-8 shadow-[0_10px_30px_rgba(0,0,0,0.5)] h-full flex flex-col">
+                        
+                        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 border-b border-slate-800 pb-6">
+                            <div>
+                                <p class="text-slate-400 mb-1">Deuda Total</p>
+                                <p id="debt-total" class="text-4xl font-bold text-red-400 font-mono skeleton">Calculando...</p>
+                            </div>
+                            <div id="debt-badge" class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-2xl flex flex-col items-center shadow-[0_0_20px_rgba(16,185,129,0.15)] opacity-0 transition-opacity">
+                                <span class="text-xs uppercase tracking-wider font-semibold mb-1">Diagnóstico</span>
+                                <span id="debt-status" class="text-xl font-black flex items-center gap-2"><i data-lucide="check-circle"></i> SALUDABLE</span>
+                            </div>
+                        </div>
+
+                        <!-- Deuda list (Dynamic) -->
+                        <div id="debt-list" class="grid grid-cols-2 gap-4 mb-6 flex-grow overflow-y-auto max-h-[150px] pr-2">
+                             <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 skeleton text-transparent">Loading...</div>
+                        </div>
+
+                        <!-- Ratio Gauge -->
+                        <div class="relative mt-auto">
+                            <div class="flex justify-between text-sm font-medium mb-2">
+                                <span class="text-slate-300">Ratio Deuda vs Patrimonio</span>
+                                <span id="debt-ratio" class="text-brand-success font-bold text-lg skeleton">-%</span>
+                            </div>
+                            <div class="h-3 w-full bg-slate-800 rounded-full overflow-hidden relative">
+                                <div class="absolute right-0 h-full w-1/3 bg-red-500/20"></div>
+                                <div class="absolute right-1/3 h-full w-1/3 bg-yellow-500/20"></div>
+                                <div id="debt-gauge" class="h-full bg-brand-success rounded-full shadow-[0_0_10px_#10B981] transition-all duration-1000 ease-out" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1 uppercase">
+                                <span>Excelente (< 10%)</span>
+                                <span>Peligro (> 30%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: Proyección a Futuro -->
+    <section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="fade-in-section text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+                <i data-lucide="rocket" class="text-emerald-400"></i> Proyección de Crecimiento
+            </h2>
+            <p class="text-xl text-slate-400 max-w-3xl mx-auto" id="proj-desc">
+                Estrategia basada en tus parámetros.
+            </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-3xl shadow-2xl overflow-hidden relative">
+            <div class="absolute left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-emerald-900/20 to-transparent pointer-events-none"></div>
+            
+            <div class="grid lg:grid-cols-3 gap-12 items-end relative z-10">
+                
+                <!-- Strategy Explanation (Cleaned up) -->
+                <div class="fade-in-section delay-100 lg:col-span-1 space-y-8">
+                    <div class="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-center shadow-inner">
+                        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="piggy-bank" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Aportación Mensual Constante</h4>
+                        <div id="proj-mensual" class="text-4xl text-emerald-400 font-mono font-bold mb-6 skeleton inline-block min-w-32">$0</div>
+                        <p class="text-slate-400 text-sm leading-relaxed border-t border-slate-800/50 pt-6">
+                            El secreto de la riqueza a largo plazo es la disciplina. Esta gráfica proyecta tu patrimonio asumiendo que mantienes <strong>constante</strong> esta inyección de capital todos los meses.
+                        </p>
+                    </div>
+                    
+                    <div class="flex gap-4 items-start p-5 bg-emerald-900/10 border border-emerald-900/30 rounded-xl">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Cálculo asumiendo un rendimiento promedio del <strong id="proj-rate" class="text-emerald-400 font-bold">-%</strong> anual compuesto en todo el portafolio.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Live Growth Chart -->
+                <div class="fade-in-section delay-300 lg:col-span-2 h-80 relative flex items-end justify-between px-4 sm:px-12 border-b-2 border-slate-700 pb-4">
+                    
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+                        <path d="M 10%,100% L 10%,80% L 50%,55% L 90%,10%" fill="none" stroke="#10B981" stroke-width="3" stroke-dasharray="8 8" class="opacity-50" />
+                    </svg>
+
+                    <!-- Today -->
+                    <div class="flex flex-col items-center group w-1/4 z-10">
+                        <div id="proj-y0" class="text-xs sm:text-lg font-bold text-slate-300 mb-2 font-mono group-hover:-translate-y-2 transition-transform skeleton">Calc...</div>
+                        <div class="w-full max-w-[80px] bg-slate-700 rounded-t-lg transition-all duration-1000 ease-out" style="height: 64px;"></div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-4 font-bold">HOY</div>
+                    </div>
+
+                    <!-- Year 2 -->
+                    <div class="flex flex-col items-center group w-1/4 z-10">
+                        <div id="proj-y2" class="text-xs sm:text-lg font-bold text-emerald-400 mb-2 font-mono group-hover:-translate-y-2 transition-transform skeleton">Calc...</div>
+                        <div class="w-full max-w-[80px] bg-gradient-to-t from-slate-800 to-emerald-800/80 rounded-t-lg transition-all duration-1000 ease-out shadow-[0_-5px_15px_rgba(16,185,129,0.1)]" style="height: 110px;"></div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-4 font-bold">AÑO 2</div>
+                    </div>
+
+                    <!-- Year 3 -->
+                    <div class="flex flex-col items-center group w-1/4 z-10">
+                        <div id="proj-y3" class="text-xs sm:text-xl font-bold text-emerald-400 mb-2 font-mono group-hover:-translate-y-2 transition-transform skeleton">Calc...</div>
+                        <div class="w-full max-w-[80px] bg-gradient-to-t from-slate-800 to-emerald-600/80 rounded-t-lg transition-all duration-1000 ease-out shadow-[0_-5px_20px_rgba(16,185,129,0.2)]" style="height: 150px;"></div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-4 font-bold">AÑO 3</div>
+                    </div>
+
+                    <!-- Year 5 -->
+                    <div class="flex flex-col items-center group w-1/4 z-10">
+                        <div class="absolute top-0 px-3 py-1 bg-emerald-500 text-slate-950 text-xs font-black rounded-full mb-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-10">Objetivo 5 Años</div>
+                        <div id="proj-y5" class="text-sm sm:text-3xl font-black text-brand-success mb-2 font-mono drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] group-hover:-translate-y-2 transition-transform skeleton">Calc...</div>
+                        <div class="w-full max-w-[80px] bg-gradient-to-t from-emerald-900 to-emerald-400 rounded-t-lg transition-all duration-1000 ease-out shadow-[0_-5px_30px_rgba(16,185,129,0.4)] relative" style="height: 250px;">
+                            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+')] opacity-50"></div>
+                        </div>
+                        <div class="text-xs sm:text-sm text-slate-300 mt-4 font-bold">AÑO 5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE LOGIC: Dynamic Dashboard System -->
+    <script>
+        lucide.createIcons();
+
+        // UI Scroll
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById('progress-bar').style.width = (scrollTop / scrollHeight) * 100 + '%';
+        });
+
+        // Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.fade-in-section').forEach(section => observer.observe(section));
+
+        // Formatters
+        const formatMXN = (num) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(num);
+        const formatM = (num) => '$' + (num / 1000000).toFixed(2) + 'M';
+        const removeSkeleton = (id) => { const el = document.getElementById(id); if(el) el.classList.remove('skeleton'); };
+
+        // Global Exchange Rate state
+        let globalExchangeRate = 20.00;
+
+        // Color Logic & Generation
+        const baseColors = {
+            'Renta Fija': '#3B82F6', // Blue
+            'ETF': '#8B5CF6',        // Purple
+            'FIBRA': '#F59E0B'       // Amber
+        };
+        const fallbackColors = ['#10B981', '#F43F5E', '#0EA5E9', '#EC4899', '#EAB308', '#8B5CF6', '#F97316'];
+        let fallbackIdx = 0;
+
+        const donutPalette = {
+            'Renta Fija': ['#2563EB', '#3B82F6', '#60A5FA', '#1D4ED8', '#93C5FD'],
+            'ETF': ['#7C3AED', '#8B5CF6', '#A78BFA', '#6D28D9', '#C4B5FD'],
+            'FIBRA': ['#D97706', '#F59E0B', '#FBBF24', '#B45309', '#FDE68A']
+        };
+
+        // Genera el color base de una categoría (detecta palabras clave o asigna uno nuevo)
+        function getCategoryBaseColor(cat) {
+            if(baseColors[cat]) return baseColors[cat];
+            
+            const norm = cat.toLowerCase();
+            if(norm.includes('renta') || norm.includes('fija')) return '#3B82F6';
+            if(norm.includes('etf') || norm.includes('variable')) return '#8B5CF6';
+            if(norm.includes('fibra') || norm.includes('raices') || norm.includes('raíces')) return '#F59E0B';
+            if(norm.includes('cripto') || norm.includes('crypto')) return '#10B981';
+            
+            // Asignar color de fallback si es categoría nueva
+            baseColors[cat] = fallbackColors[fallbackIdx % fallbackColors.length];
+            fallbackIdx++;
+            return baseColors[cat];
+        }
+
+        // Obtiene un tono para los gajos de la dona
+        function getDonutColor(cat, count) {
+            if(donutPalette[cat]) return donutPalette[cat][count % donutPalette[cat].length];
+            return getCategoryBaseColor(cat); // Usa el color sólido si no tiene paleta
+        }
+
+        // --- 1. Fetch Live Exchange Rate ---
+        async function fetchExchangeRate() {
+            try {
+                const response = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await response.json();
+                globalExchangeRate = data.rates.MXN;
+                document.getElementById('live-rate-display').innerHTML = `<span class="text-brand-success font-bold">Conectado:</span> 1 USD = $${globalExchangeRate.toFixed(2)} MXN`;
+            } catch (error) {
+                console.error("Error fetching rate, using fallback $20.", error);
+                document.getElementById('live-rate-display').innerText = "Modo Offline (1 USD = $20 MXN)";
+            }
+        }
+
+        // --- 2. Template Generation & Download ---
+        const csvTemplate = `Categoría,Institución / Ticker,Monto Actual,Moneda
+Renta Fija,OpenBank,25000,MXN
+Renta Fija,Mifel,500,MXN
+ETF,VGT,25,USD
+ETF,VOO,25,USD
+FIBRA,DANHOS13,1000,MXN
+
+Institución / Crédito,Monto Deuda,Moneda
+BBV,29000,MXN
+OpenBank,30000,MXN
+
+Parámetro,Valor
+Salario Mensual Neto,25000
+Porcentaje destinado a invertir (%),10
+Tasa anual esperada del portafolio (%),9`;
+
+        function downloadTemplate() {
+            const blob = new Blob(["\uFEFF" + csvTemplate], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Plantilla_Salud_Financiera.csv";
+            link.click();
+        }
+
+        // --- 3. Parsing Uploaded CSV ---
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const success = processCSVData(text);
+                
+                if (success) {
+                    document.getElementById('hero-subtitle').innerHTML = `<span class="text-emerald-400 font-bold"><i data-lucide="check" class="inline w-4 h-4"></i> Datos cargados con éxito.</span> Mostrando tu reporte real.`;
+                    
+                    // Trigger visual update highlight
+                    document.querySelectorAll('.font-mono:not(.skeleton)').forEach(el => {
+                        el.classList.remove('highlight-update');
+                        void el.offsetWidth; // trigger reflow
+                        el.classList.add('highlight-update');
+                    });
+                } else {
+                    document.getElementById('hero-subtitle').innerHTML = `<span class="text-red-400 font-bold"><i data-lucide="alert-triangle" class="inline w-4 h-4"></i> Error de formato.</span> Asegúrate de usar la plantilla original.`;
+                }
+                lucide.createIcons();
+                
+                event.target.value = '';
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // Limpieza robusta de números (Remueve $, espacios, comillas y detecta formato Excel México/Europa)
+        function safeParseFloat(val, isEuropeanCSV) {
+            if (!val) return 0;
+            let str = String(val).replace(/[\$\s"]/g, '').trim();
+            
+            if (isEuropeanCSV) {
+                str = str.replace(/\./g, '').replace(',', '.');
+            } else {
+                str = str.replace(/,/g, '');
+            }
+            return parseFloat(str) || 0;
+        }
+
+        function processCSVData(csvText) {
+            const lines = csvText.split(/\r\n|\n|\r/).map(l => l.trim()).filter(l => l);
+            let mode = '';
+            let parsedData = { assets: [], debts: [], params: {} };
+            let hasData = false;
+            
+            const isEuropeanCSV = (lines.length > 0 && lines[0].includes(';'));
+            const separator = isEuropeanCSV ? ';' : ',';
+
+            function splitRow(str) {
+                const result = []; let cell = ''; let inQuotes = false;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str[i];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === separator && !inQuotes) { result.push(cell.trim()); cell = ''; }
+                    else cell += char;
+                }
+                result.push(cell.trim()); return result;
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const normLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                
+                if (normLine.includes('monto actual') || normLine.includes('ticker')) { mode = 'assets'; continue; }
+                if (normLine.includes('monto deuda') || normLine.includes('credito')) { mode = 'debts'; continue; }
+                if (normLine.includes('parametro') || (normLine.includes('valor') && !normLine.includes('monto'))) { mode = 'params'; continue; }
+
+                const cols = splitRow(line);
+                
+                if (mode === 'assets' && cols.length >= 4 && cols[2]) {
+                    const amount = safeParseFloat(cols[2], isEuropeanCSV);
+                    if(amount > 0) {
+                        parsedData.assets.push({ category: cols[0], name: cols[1], amount: amount, currency: cols[3] });
+                        hasData = true;
+                    }
+                } else if (mode === 'debts' && cols.length >= 3 && cols[1]) {
+                    const amount = safeParseFloat(cols[1], isEuropeanCSV);
+                    if(amount > 0) {
+                        parsedData.debts.push({ name: cols[0], amount: amount, currency: cols[2] });
+                        hasData = true;
+                    }
+                } else if (mode === 'params' && cols.length >= 2 && cols[1]) {
+                    parsedData.params[cols[0]] = safeParseFloat(cols[1], isEuropeanCSV);
+                    hasData = true;
+                }
+            }
+            
+            if (hasData) {
+                renderDashboard(parsedData);
+                return true;
+            }
+            return false;
+        }
+
+        // --- 4. Render Dashboard Engine ---
+        function renderDashboard(data) {
+            // A. Calculate Assets converting USD to MXN based on live rate
+            let totalPatrimony = 0;
+            let groupTotals = {};
+            
+            data.assets.forEach(asset => {
+                let amountMXN = asset.amount;
+                if (asset.currency === 'USD') amountMXN = asset.amount * globalExchangeRate;
+                asset.amountMXN = amountMXN;
+                totalPatrimony += amountMXN;
+                
+                if(!groupTotals[asset.category]) groupTotals[asset.category] = 0;
+                groupTotals[asset.category] += amountMXN;
+            });
+
+            // Update Total
+            document.getElementById('total-patrimonio').innerText = formatMXN(totalPatrimony);
+            removeSkeleton('total-patrimonio');
+
+            // B. Render Donut & Asset List
+            const svgContainer = document.getElementById('donut-svg');
+            const listContainer = document.getElementById('assets-list');
+            
+            svgContainer.innerHTML = '<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#1e293b" stroke-width="4"></circle>';
+            listContainer.innerHTML = '';
+            
+            let currentOffset = 0;
+            let colorCounters = {};
+
+            data.assets.sort((a,b) => b.amountMXN - a.amountMXN).forEach((asset, index) => {
+                const count = colorCounters[asset.category] || 0;
+                const color = getDonutColor(asset.category, count);
+                colorCounters[asset.category] = count + 1;
+
+                const pct = (asset.amountMXN / totalPatrimony) * 100 || 0;
+
+                // SVG Circle
+                svgContainer.innerHTML += `
+                    <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" 
+                        fill="transparent" stroke="${color}" stroke-width="6" 
+                        stroke-dasharray="0 100" stroke-dashoffset="${-currentOffset}">
+                    </circle>
+                `;
+
+                // List Row
+                listContainer.innerHTML += `
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-slate-800/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full shadow-lg" style="background-color: ${color}; box-shadow: 0 0 10px ${color}"></div>
+                            <div>
+                                <div class="font-bold text-slate-200">${asset.name}</div>
+                                <div class="text-xs text-slate-500">${asset.category} ${asset.currency === 'USD' ? `(Original: $${asset.amount} USD)` : ''}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-mono font-bold text-slate-300">${formatMXN(asset.amountMXN)}</div>
+                            <div class="text-xs font-medium" style="color: ${color}">${pct.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                `;
+                currentOffset += pct;
+            });
+            
+            document.getElementById('donut-center-count').innerText = data.assets.length;
+
+            // Trigger Donut Animations
+            setTimeout(() => {
+                const circles = svgContainer.querySelectorAll('.donut-segment');
+                let animateOffset = 0;
+                circles.forEach((c, i) => {
+                    const pct = (data.assets[i].amountMXN / totalPatrimony) * 100;
+                    c.style.strokeDasharray = `${pct} 100`;
+                    c.style.strokeDashoffset = `${-animateOffset}`;
+                    animateOffset += pct;
+                });
+            }, 100);
+
+            // C. Render Diversification Totals Dynamically (100% based on CSV groups)
+            const divBar = document.getElementById('diversification-bar');
+            const divList = document.getElementById('diversification-list');
+            divBar.innerHTML = '';
+            divList.innerHTML = '';
+
+            const sortedGroups = Object.entries(groupTotals).sort((a, b) => b[1] - a[1]);
+
+            sortedGroups.forEach(([cat, amount]) => {
+                const pct = totalPatrimony > 0 ? (amount / totalPatrimony) * 100 : 0;
+                const color = getCategoryBaseColor(cat);
+
+                // Bar Segment
+                divBar.innerHTML += `
+                    <div class="h-full flex items-center justify-center text-xs font-bold text-white transition-all duration-1000 ease-out" 
+                         style="width: ${pct}%; background-color: ${color}; overflow: hidden;" title="${cat}: ${pct.toFixed(2)}%">
+                         ${pct > 5 ? pct.toFixed(2) + '%' : ''}
+                    </div>
+                `;
+
+                // List Item
+                divList.innerHTML += `
+                    <div class="flex justify-between items-center border-b border-slate-800/50 py-3 first:pt-0 last:border-0 last:pb-0">
+                        <span class="text-slate-300 font-medium flex items-center gap-3">
+                            <div class="w-3 h-3 rounded shadow-lg" style="background-color: ${color}; box-shadow: 0 0 8px ${color}"></div>
+                            ${cat}
+                        </span>
+                        <div class="text-right">
+                            <div class="font-mono text-slate-300 font-bold">${formatMXN(amount)}</div>
+                            <div class="text-xs font-medium" style="color: ${color}">${pct.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // D. Render Debts
+            let totalDebt = 0;
+            const debtListEl = document.getElementById('debt-list');
+            debtListEl.innerHTML = '';
+            
+            data.debts.forEach(debt => {
+                let amt = debt.currency === 'USD' ? debt.amount * globalExchangeRate : debt.amount;
+                totalDebt += amt;
+                debtListEl.innerHTML += `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <p class="text-xs text-slate-500 whitespace-nowrap overflow-hidden text-ellipsis">${debt.name}</p>
+                        <p class="font-mono text-slate-300 font-bold">${formatMXN(amt)}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('debt-total').innerText = formatMXN(totalDebt);
+            removeSkeleton('debt-total');
+
+            const debtRatio = totalPatrimony > 0 ? (totalDebt / totalPatrimony) * 100 : 0;
+            document.getElementById('debt-ratio').innerText = debtRatio.toFixed(2) + '%';
+            removeSkeleton('debt-ratio');
+            
+            setTimeout(() => {
+                document.getElementById('debt-gauge').style.width = `${Math.min(debtRatio, 100)}%`;
+                
+                const badge = document.getElementById('debt-badge');
+                const status = document.getElementById('debt-status');
+                badge.classList.remove('opacity-0');
+                
+                if(debtRatio > 30) {
+                    document.getElementById('debt-gauge').style.backgroundColor = '#EF4444';
+                    badge.className = 'bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-3 rounded-2xl flex flex-col items-center shadow-[0_0_20px_rgba(239,68,68,0.2)]';
+                    status.innerHTML = `<i data-lucide="alert-triangle"></i> PELIGRO`;
+                } else if(debtRatio > 10) {
+                    document.getElementById('debt-gauge').style.backgroundColor = '#F59E0B';
+                    badge.className = 'bg-amber-500/10 border border-amber-500/30 text-amber-400 px-6 py-3 rounded-2xl flex flex-col items-center shadow-[0_0_20px_rgba(245,158,11,0.2)]';
+                    status.innerHTML = `<i data-lucide="alert-circle"></i> ATENCIÓN`;
+                } else {
+                    document.getElementById('debt-gauge').style.backgroundColor = '#10B981';
+                    badge.className = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-2xl flex flex-col items-center shadow-[0_0_20px_rgba(16,185,129,0.2)]';
+                    status.innerHTML = `<i data-lucide="check-circle"></i> SALUDABLE`;
+                }
+                lucide.createIcons();
+            }, 500);
+
+            // E. Projections (Cleaned up from rigid distribution)
+            let salary = 177000, invPct = 10, expectedRate = 0.095;
+            for (let [key, val] of Object.entries(data.params)) {
+                let k = key.toLowerCase();
+                if(k.includes('salario') || k.includes('neto')) salary = val;
+                if(k.includes('destinado') || k.includes('invertir')) invPct = val;
+                if(k.includes('tasa') || k.includes('esperada')) expectedRate = val / 100;
+            }
+            
+            const monthlyInjection = salary * (invPct / 100);
+            const annualInjection = monthlyInjection * 12;
+
+            document.getElementById('proj-desc').innerHTML = `Estrategia: Invertir el <strong>${invPct}% de tus ingresos</strong> constantemente.`;
+            document.getElementById('proj-mensual').innerText = formatMXN(monthlyInjection); removeSkeleton('proj-mensual');
+            document.getElementById('proj-rate').innerText = (expectedRate*100).toFixed(2) + '%';
+            
+            // Formula: FV = P(1+r)^t + PMT * [((1+r)^t - 1) / r]
+            const calcFV = (years) => {
+                const p = totalPatrimony * Math.pow(1 + expectedRate, years);
+                const c = annualInjection * ((Math.pow(1 + expectedRate, years) - 1) / expectedRate);
+                return p + c;
+            };
+
+            const p0 = totalPatrimony;
+            const p2 = calcFV(2);
+            const p3 = calcFV(3);
+            const p5 = calcFV(5);
+
+            document.getElementById('proj-y0').innerText = formatM(p0); removeSkeleton('proj-y0');
+            document.getElementById('proj-y2').innerText = formatM(p2); removeSkeleton('proj-y2');
+            document.getElementById('proj-y3').innerText = formatM(p3); removeSkeleton('proj-y3');
+            document.getElementById('proj-y5').innerText = formatM(p5); removeSkeleton('proj-y5');
+        }
+
+        // Initialize App
+        async function startApp() {
+            await fetchExchangeRate();
+            processCSVData(csvTemplate); // Load default initially
+        }
+        
+        window.addEventListener('DOMContentLoaded', startApp);
+
+    </script>
+</body>
+</html>
