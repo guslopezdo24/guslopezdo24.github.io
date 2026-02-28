@@ -61,7 +61,7 @@
 
     <!-- Hero Section -->
     <header class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6">
-        <div class="absolute top-6 right-6 z-50">
+        <div class="fixed top-6 right-6 z-50 pointer-events-none">
             <div class="relative pointer-events-auto">
                 <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="sm:hidden bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 p-2.5 rounded-xl flex items-center justify-center transition-colors shadow-lg">
@@ -73,9 +73,14 @@
                     <a href="index.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-lg text-sm font-bold group">
                         <i data-lucide="calculator" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Calculadora
                     </a>
-                    <a href="reportesalud.html" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold py-2 pl-3 pr-5 rounded-full transition-all hover:scale-105 active:scale-95 text-sm flex items-center gap-2 shadow-sm group">
-                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-lg group-hover:scale-110 transition-transform">🩺</span> 
-                        Salud Financiera
+                    <a href="finanzas101.html" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold py-2.5 px-4 rounded-full transition-all hover:scale-105 active:scale-95 text-sm flex items-center gap-2 shadow-sm group">
+                        <i data-lucide="book-open" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Finanzas 101
+                    </a>
+                    <a href="credito.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-lg text-sm font-bold group">
+                        <i data-lucide="credit-card" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Crédito
+                    </a>
+                    <a href="reportesalud.html" class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-lg text-sm font-bold group">
+                        <i data-lucide="heart-pulse" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i> Salud Financiera
                     </a>
                 </div>
 
@@ -85,8 +90,16 @@
                         <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i></div>
                         Calculadora
                     </a>
-                    <a href="reportesalud.html" class="hover:bg-slate-800 text-emerald-400 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
-                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-lg">🩺</span> 
+                    <a href="finanzas101.html" class="hover:bg-slate-800 text-emerald-400 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                        <div class="bg-emerald-500/20 p-1.5 rounded-lg"><i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i></div>
+                        Finanzas 101
+                    </a>
+                    <a href="credito.html" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                        <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="credit-card" class="w-4 h-4 text-emerald-400"></i></div>
+                        Crédito
+                    </a>
+                    <a href="reportesalud.html" class="hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-medium w-full pointer-events-auto">
+                        <div class="bg-slate-800/80 p-1.5 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4 text-emerald-400"></i></div>
                         Salud Financiera
                     </a>
                 </div>
